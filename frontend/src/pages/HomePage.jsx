@@ -226,7 +226,6 @@ function HomePage() {
 
             {/* PRODUCTS AREA */}
             <div className="products-area">
-              <span className="results-count">{filtered.length} products</span>
               <div className="sort-bar" style={{justifyContent:'flex-start',flexWrap:'wrap',gap:'0.5rem'}}>
                 <span className="sort-label">SORT:</span>
                 {[
@@ -244,7 +243,7 @@ function HomePage() {
                     {s.label}
                   </button>
                 ))}
-                
+                <span className="results-count">{filtered.length} products</span>
               </div>
 
               {loading ? (
