@@ -167,4 +167,46 @@ router.put('/orders/:id/status', protect, adminOnly, async (req, res) => {
   }
 });
 
+// GET detailed seller stats
+router.get('/sellers', protect, adminOnly, async (req, res) => {
+  try {
+    const sellers = await User.find({ role: 'seller' }).select('-password');
+    
+    const sellerStats = await Promise.all(sellers.map(async (seller) => {
+      const products = await Product.find({ seller: seller._id });
+      const productIds = products.map(p => p._id.toString());
+      
+      const orders = await Order.find({})
+        .populate('buyer', 'name email')
+        .populate('items.product', 'name image price');
+      
+      const sellerOrders = orders.filter(order =>
+        order.items.some(item =>
+          item.product && productIds.includes(item.product._id.toString())
+        )
+      );
+
+      const totalRevenue = sellerOrders.reduce((sum, o) => sum + o.totalPrice, 0);
+      const pendingOrders = sellerOrders.filter(o => o.status === 'pending').length;
+      const deliveredOrders = sellerOrders.filter(o => o.status === 'delivered').length;
+      const cancelledOrders = sellerOrders.filter(o => o.status === 'cancelled').length;
+
+      return {
+        seller,
+        totalProducts: products.length,
+        totalOrders: sellerOrders.length,
+        totalRevenue,
+        pendingOrders,
+        deliveredOrders,
+        cancelledOrders,
+        recentOrders: sellerOrders.slice(0, 5)
+      }
+    }));
+
+    res.json(sellerStats);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

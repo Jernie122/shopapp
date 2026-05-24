@@ -94,5 +94,22 @@ router.get('/my-orders', protect, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+// UPDATE order status (seller approves/processes)
+router.put('/orders/:id/status', protect, async (req, res) => {
+  try {
+    if (req.user.role !== 'seller' && req.user.role !== 'admin') {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    order.status = req.body.status;
+    await order.save();
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;
