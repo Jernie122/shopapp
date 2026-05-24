@@ -67,5 +67,28 @@ router.put('/:id/status', protect, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+// Buyer confirms order received
+router.put('/:id/confirm', protect, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
 
+    if (order.buyer.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    if (order.status !== 'shipped') {
+      return res.status(400).json({ message: 'Order must be shipped before confirming' });
+    }
+
+    order.status = 'delivered';
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    await order.save();
+
+    res.json({ message: 'Order confirmed as delivered!', order });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 module.exports = router;

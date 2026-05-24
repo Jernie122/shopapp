@@ -33,24 +33,20 @@ router.post('/:productId', protect, async (req, res) => {
     }
 
     // Check if user ordered this product
-    const orders = await Order.find({ buyer: req.user._id });
-    const hasBought = orders.some(order =>
-      order.items.some(item =>
-        item.product?.toString() === req.params.productId
-      )
-    );
+    const orders = await Order.find({ 
+  buyer: req.user._id,
+  status: 'delivered'
+});
 
-    if (!hasBought) {
-      return res.status(400).json({ message: 'You can only review products you have ordered' });
-    }
+const hasDelivered = orders.some(order =>
+  order.items.some(item =>
+    item.product?.toString() === req.params.productId
+  )
+);
 
-    const review = await Review.create({
-      product: req.params.productId,
-      user: req.user._id,
-      name: req.user.name,
-      rating: Number(rating),
-      comment
-    });
+if (!hasDelivered) {
+  return res.status(400).json({ message: 'You can only review products after they are delivered' });
+}
 
     // Update product rating
     const reviews = await Review.find({ product: req.params.productId });
