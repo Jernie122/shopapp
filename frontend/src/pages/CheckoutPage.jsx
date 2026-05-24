@@ -42,7 +42,7 @@ function CheckoutPage() {
       }))
 
       await axios.post(
-        'http://localhost:5000/api/orders',
+        'https://shopapp-backend-1bio.onrender.com/api/orders',
         {
           items: orderItems,
           shippingAddress: form,

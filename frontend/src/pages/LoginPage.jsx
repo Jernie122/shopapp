@@ -12,7 +12,7 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const { data } = await axios.post('https://shopapp-backend-1bio.onrender.com/api/auth/login', { email, password });
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       navigate('/');

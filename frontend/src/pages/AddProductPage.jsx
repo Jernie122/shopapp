@@ -35,7 +35,7 @@ function AddProductPage() {
         formData.append('image', image)
 
         const uploadRes = await axios.post(
-          'http://localhost:5000/api/upload',
+          'https://shopapp-backend-1bio.onrender.com/api/upload',
           formData,
           {
             headers: {
@@ -48,7 +48,7 @@ function AddProductPage() {
       }
 
       await axios.post(
-        'http://localhost:5000/api/products',
+        'https://shopapp-backend-1bio.onrender.com/api/products',
         { name, description, price: Number(price), category, stock: Number(stock), image: imageUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       )

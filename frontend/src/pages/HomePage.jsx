@@ -18,7 +18,7 @@ function HomePage() {
   const fetchProducts = async (keyword = '') => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/products?search=${keyword}`
+        `https://shopapp-backend-1bio.onrender.com/api/products?search=${keyword}`
       );
       setProducts(data);
       setLoading(false);

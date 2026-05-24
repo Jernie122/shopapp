@@ -13,7 +13,7 @@ function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
+      const { data } = await axios.post('https://shopapp-backend-1bio.onrender.com/api/auth/register', { name, email, password });
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       navigate('/');
