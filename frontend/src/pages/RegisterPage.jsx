@@ -1,4 +1,3 @@
-// RegisterPage.jsx – Synthwave Sunset
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -25,92 +24,168 @@ function RegisterPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Roboto+Mono&display=swap');
-        .register-synth {
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
+        .register-page {
           min-height: 100vh;
-          background: linear-gradient(180deg, #0e0a1f, #2a1030);
+          background: linear-gradient(145deg, #f9f7f5 0%, #f0eee9 100%);
           display: flex;
           justify-content: center;
           align-items: center;
-          position: relative;
-          font-family: 'Orbitron', monospace;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           padding: 1.5rem;
         }
-        .register-grid {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          height: 30%;
-          background-image: repeating-linear-gradient(90deg, #ff44aa30 0px, #ff44aa30 2px, transparent 2px, transparent 40px);
-          transform: skewX(-20deg) scaleY(0.4);
-          animation: regGridMove 10s linear infinite;
-        }
-        @keyframes regGridMove { to { background-position: 80px 0; } }
-        .register-sun {
-          position: absolute;
-          top: 5%;
-          right: 5%;
-          width: 180px;
-          height: 180px;
-          background: radial-gradient(circle, #ffaa44, #ff44aa);
-          filter: blur(30px);
-          opacity: 0.3;
-          animation: sunGlow 4s infinite alternate;
-        }
+
         .register-card {
-          background: rgba(20,10,30,0.7);
-          backdrop-filter: blur(12px);
-          border: 1px solid #ffaa44;
+          background: white;
           border-radius: 32px;
           padding: 2rem;
           width: 100%;
-          max-width: 400px;
-          z-index: 1;
+          max-width: 420px;
+          box-shadow: 0 8px 28px -12px rgba(0, 0, 0, 0.08);
+          border: 1px solid #f0ebe5;
         }
-        .register-title { text-align: center; font-size: 1.8rem; color: #ffaa44; text-shadow: 0 0 5px #ff44aa; }
-        .register-sub { text-align: center; color: #ff44aa; margin-bottom: 2rem; font-size: 0.8rem; }
-        .error-msg { color: #ff44aa; border: 1px solid #ff44aa; padding: 0.3rem; border-radius: 40px; text-align: center; margin-bottom: 1rem; }
-        .input-group { margin-bottom: 1rem; }
-        .synth-input {
+
+        .register-title {
+          text-align: center;
+          font-weight: 600;
+          font-size: 1.6rem;
+          letter-spacing: -0.3px;
+          color: #2c2c2c;
+          margin-bottom: 0.25rem;
+        }
+
+        .register-sub {
+          text-align: center;
+          color: #8f8170;
+          font-size: 0.85rem;
+          margin-bottom: 1.8rem;
+        }
+
+        .error-message {
+          background: #fef4f1;
+          color: #b15e4a;
+          border-radius: 40px;
+          padding: 0.7rem;
+          text-align: center;
+          font-size: 0.8rem;
+          margin-bottom: 1.2rem;
+          font-weight: 500;
+        }
+
+        .input-group {
+          margin-bottom: 1rem;
+        }
+
+        .modern-input {
           width: 100%;
-          padding: 0.8rem;
-          background: #0a0515;
-          border: 1px solid #ffaa44;
-          border-radius: 60px;
-          color: #ffaa44;
-          font-family: monospace;
+          padding: 0.8rem 1rem;
+          background: #ffffff;
+          border: 1px solid #e2d8cf;
+          border-radius: 40px;
+          font-family: 'Inter', monospace;
+          font-size: 0.9rem;
+          color: #2c2c2c;
           outline: none;
+          transition: all 0.2s ease;
+          box-sizing: border-box;
         }
-        .synth-input:focus { border-color: #ff44aa; box-shadow: 0 0 8px #ff44aa; }
+
+        .modern-input:focus {
+          border-color: #c9b69a;
+          box-shadow: 0 0 0 2px rgba(90, 78, 62, 0.08);
+        }
+
+        .modern-input::placeholder {
+          color: #bcafa0;
+          font-weight: 400;
+        }
+
         .register-btn {
           width: 100%;
-          background: #ff44aa;
+          background: #2c2c2c;
           border: none;
           padding: 0.8rem;
-          font-family: 'Orbitron', monospace;
-          font-weight: bold;
-          border-radius: 60px;
+          font-family: 'Inter', sans-serif;
+          font-weight: 600;
+          font-size: 0.9rem;
+          color: white;
+          border-radius: 40px;
           cursor: pointer;
+          transition: all 0.2s ease;
+          margin-top: 0.5rem;
         }
-        .register-btn:hover { background: #ffaa44; box-shadow: 0 0 12px #ffaa44; }
-        .login-link { text-align: center; margin-top: 1.5rem; font-size: 0.8rem; }
-        .login-link a { color: #ffaa44; text-decoration: none; border-bottom: 1px solid #ffaa44; }
-        .login-link a:hover { color: #ff44aa; }
+
+        .register-btn:hover {
+          background: #4f4236;
+          transform: scale(0.98);
+        }
+
+        .login-link {
+          text-align: center;
+          margin-top: 1.5rem;
+          font-size: 0.8rem;
+          color: #8f8170;
+        }
+
+        .login-link a {
+          color: #2c2c2c;
+          text-decoration: none;
+          font-weight: 600;
+          border-bottom: 1px solid #e2d8cf;
+        }
+
+        .login-link a:hover {
+          color: #4f4236;
+        }
       `}</style>
-      <div className="register-synth">
-        <div className="register-grid"></div>
-        <div className="register-sun"></div>
+
+      <div className="register-page">
         <div className="register-card">
-          <div className="register-title">⟡ REGISTRATION NODE</div>
-          <div className="register-sub">&gt; CREATE NEW ACCESS</div>
-          {error && <div className="error-msg">⚠ {error}</div>}
+          <div className="register-title">create account</div>
+          <div className="register-sub">join our community</div>
+
+          {error && <div className="error-message">{error}</div>}
+
           <form onSubmit={handleRegister}>
-            <div className="input-group"><input type="text" placeholder="[ OPERATOR NAME ] // FULL NAME" value={name} onChange={(e) => setName(e.target.value)} className="synth-input" required /></div>
-            <div className="input-group"><input type="email" placeholder="[ ENCRYPTED ID ] // EMAIL" value={email} onChange={(e) => setEmail(e.target.value)} className="synth-input" required /></div>
-            <div className="input-group"><input type="password" placeholder="[ SECURE KEY ] // PASSWORD" value={password} onChange={(e) => setPassword(e.target.value)} className="synth-input" required /></div>
-            <button type="submit" className="register-btn">⚡ REGISTER</button>
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="modern-input"
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="email"
+                placeholder="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="modern-input"
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="password"
+                placeholder="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="modern-input"
+                required
+              />
+            </div>
+            <button type="submit" className="register-btn">
+              register
+            </button>
           </form>
-          <div className="login-link">[ EXISTING PROFILE? ] <Link to="/login">⟳ LOGIN</Link></div>
+
+          <div className="login-link">
+            already have an account? <Link to="/login">sign in</Link>
+          </div>
         </div>
       </div>
     </>
