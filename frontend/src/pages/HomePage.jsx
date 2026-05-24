@@ -327,10 +327,20 @@ function HomePage() {
                       )}
                     </div>
                     <div className="info-synth">
-                      <div className="name-synth">{product.name}</div>
-                      <div className="price-synth">⍟ {product.price.toLocaleString()}</div>
-                      <div className="stock-synth">📼 STOCK: {product.stock}</div>
-                    </div>
+  <div className="name-synth">{product.name}</div>
+  <div className="price-synth">⍟ {product.price.toLocaleString()}</div>
+  <div style={{display:'flex',gap:'2px',alignItems:'center',margin:'4px 0'}}>
+    {[1,2,3,4,5].map(star => (
+      <span key={star} style={{
+        color: star <= Math.round(product.ratings || 0) ? '#ffaa44' : '#333',
+        fontSize:'14px',
+        textShadow: star <= Math.round(product.ratings || 0) ? '0 0 4px #ffaa44' : 'none'
+      }}>★</span>
+    ))}
+    <span style={{fontSize:'11px',color:'#888',marginLeft:'4px'}}>({product.numReviews || 0})</span>
+  </div>
+  <div className="stock-synth">📼 STOCK: {product.stock}</div>
+</div>
                   </div>
                   <button
                     className="add-synth"
