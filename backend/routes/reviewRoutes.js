@@ -20,43 +20,11 @@ router.get('/:productId', async (req, res) => {
 // CREATE a review
 router.post('/:productId', protect, async (req, res) => {
   try {
-    const { rating, comment } = req.body;
-
-    // Check if user already reviewed
-    const alreadyReviewed = await Review.findOne({
-      product: req.params.productId,
-      user: req.user._id
-    });
-
-    if (alreadyReviewed) {
-      return res.status(400).json({ message: 'You already reviewed this product' });
-    }
-
-    // Check if user ordered this product
-    const orders = await Order.find({ 
-  buyer: req.user._id,
-  status: 'delivered'
-});
-
-const hasDelivered = orders.some(order =>
-  order.items.some(item =>
-    item.product?.toString() === req.params.productId
-  )
-);
-
-if (!hasDelivered) {
-  return res.status(400).json({ message: 'You can only review products after they are delivered' });
-}
-
-    // Update product rating
-    const reviews = await Review.find({ product: req.params.productId });
-   router.post('/:productId', protect, async (req, res) => {
-  try {
     const rating = Number(req.body.rating)
     const { comment } = req.body
 
     if (!rating || rating < 1 || rating > 5) {
-      return res.status(400).json({ message: 'Please provide a valid rating between 1 and 5' })
+      return res.status(400).json({ message: 'Please provide a valid rating' })
     }
 
     const alreadyReviewed = await Review.findOne({
@@ -83,7 +51,7 @@ if (!hasDelivered) {
       return res.status(400).json({ message: 'You can only review products after they are delivered' })
     }
 
-    const review = await Review.create({
+    const newReview = await Review.create({
       product: req.params.productId,
       user: req.user._id,
       name: req.user.name,
@@ -91,26 +59,18 @@ if (!hasDelivered) {
       comment
     })
 
-   const allReviews = await Review.find({ product: req.params.productId })
-const total = allReviews.reduce((sum, r) => sum + Number(r.rating), 0)
-const avg = allReviews.length > 0 ? total / allReviews.length : 0
+    const allReviews = await Review.find({ product: req.params.productId })
+    const total = allReviews.reduce((sum, r) => sum + Number(r.rating), 0)
+    const avg = allReviews.length > 0 ? total / allReviews.length : 0
 
-await Product.findByIdAndUpdate(req.params.productId, {
-  ratings: Number(avg.toFixed(1)),
-  numReviews: allReviews.length
-})
+    await Product.findByIdAndUpdate(req.params.productId, {
+      ratings: Number(avg.toFixed(1)),
+      numReviews: allReviews.length
+    })
 
-    res.status(201).json({ message: 'Review added!', review })
+    res.status(201).json({ message: 'Review added!', review: newReview })
   } catch (error) {
     res.status(500).json({ message: error.message })
-  }
-})
-
-    ;
-
-    res.status(201).json({ message: 'Review added!', review });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
 });
 
@@ -126,13 +86,14 @@ router.delete('/:productId/:reviewId', protect, async (req, res) => {
 
     await review.deleteOne();
 
-    // Update product rating
-    const reviews = await Review.find({ product: req.params.productId });
-    const avgRating = reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-      : 0;
+    const allReviews = await Review.find({ product: req.params.productId })
+    const total = allReviews.reduce((sum, r) => sum + Number(r.rating), 0)
+    const avg = allReviews.length > 0 ? total / allReviews.length : 0
 
-    ;
+    await Product.findByIdAndUpdate(req.params.productId, {
+      ratings: Number(avg.toFixed(1)),
+      numReviews: allReviews.length
+    })
 
     res.json({ message: 'Review deleted' });
   } catch (error) {
