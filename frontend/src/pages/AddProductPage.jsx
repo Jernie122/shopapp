@@ -74,14 +74,26 @@ function AddProductPage() {
           }}>{message}</p>
         )}
         <form onSubmit={handleSubmit}>
-          <input
-            type='text'
-            placeholder='Product Name'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={styles.input}
-            required
-          />
+          <select
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+  style={{...styles.input, cursor:'pointer'}}
+  required
+>
+  <option value=''>-- Select Category --</option>
+  <option value='Shoes'>Shoes</option>
+  <option value='Shirts'>Shirts</option>
+  <option value='Pants'>Pants</option>
+  <option value='Bags'>Bags</option>
+  <option value='Electronics'>Electronics</option>
+  <option value='Food'>Food</option>
+  <option value='Beauty'>Beauty</option>
+  <option value='Home'>Home</option>
+  <option value='Sports'>Sports</option>
+  <option value='Toys'>Toys</option>
+  <option value='Books'>Books</option>
+  <option value='Other'>Other</option>
+</select>
           <textarea
             placeholder='Product Description'
             value={description}
