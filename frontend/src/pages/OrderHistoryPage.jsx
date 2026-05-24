@@ -128,7 +128,7 @@ function OrderHistoryPage() {
                         {order.status === 'delivered' && (
                           <button
                             className="review-btn"
-                            onClick={() => navigate(`/product/${item.product}?review=true`)}
+                            onClick={() => navigate(`/product/${item.product?._id || item.product}?review=true`)}
                           >
                             ⭐ RATE
                           </button>
