@@ -8,6 +8,7 @@ import CartPage from './pages/CartPage'
 import AddProductPage from './pages/AddProductPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderHistoryPage from './pages/OrderHistoryPage'
+import AdminDashboard from './pages/AdminDashboard'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path='/add-product' element={<AddProductPage />} />
         <Route path='/checkout' element={<CheckoutPage />} />
         <Route path='/orders' element={<OrderHistoryPage />} />
+        <Route path='/admin' element={<AdminDashboard />} />
       </Routes>
     </>
   )

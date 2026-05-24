@@ -99,6 +99,23 @@ function Navbar() {
           background: #ffaa44;
           color: #0e0a1f;
         }
+        .admin-btn {
+          background: transparent;
+          border: 1px solid #ff44aa;
+          color: #ff44aa;
+          padding: 0.2rem 0.8rem;
+          border-radius: 30px;
+          cursor: pointer;
+          font-family: monospace;
+          text-decoration: none;
+          font-size: 0.85rem;
+          letter-spacing: 1px;
+          text-shadow: 0 0 4px #ff44aa;
+        }
+        .admin-btn:hover {
+          background: #ff44aa;
+          color: #0e0a1f;
+        }
         @media (max-width: 640px) {
           .synth-nav { padding: 0.7rem 1rem; }
           .nav-links { gap: 0.8rem; }
@@ -114,6 +131,9 @@ function Navbar() {
               <>
                 <Link to="/add-product" className="sell-btn">SELL</Link>
                 <Link to="/orders" className="nav-link">ORDERS</Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin" className="admin-btn">⟡ ADMIN</Link>
+                )}
                 <span className="nav-link user-name">👤 {user.name.toUpperCase()}</span>
                 <button onClick={logout} className="logout-btn">LOGOUT</button>
               </>
