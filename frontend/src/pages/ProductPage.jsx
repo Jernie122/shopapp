@@ -72,12 +72,12 @@ function ProductPage() {
     setSubmitting(true)
     setReviewMsg('')
     try {
-      await axios.post(
+      const response = await axios.post(
         `${API}/api/reviews/${id}`,
         { rating: Number(rating), comment },
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      setReviewMsg('Review submitted!')
+      setReviewMsg(response.data.message || 'Review submitted!')
       setRating(0)
       setComment('')
       fetchReviews()
@@ -88,7 +88,6 @@ function ProductPage() {
       setSubmitting(false)
     }
   }
-
   const deleteReview = async (reviewId) => {
     if (!window.confirm('Delete your review?')) return
     try {
