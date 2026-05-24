@@ -10,53 +10,34 @@ function AdminDashboard() {
   const [users, setUsers] = useState([])
   const [products, setProducts] = useState([])
   const [orders, setOrders] = useState([])
+  const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
   const user = JSON.parse(localStorage.getItem('user'))
-
-  useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/')
-      return
-    }
-    fetchStats()
-    fetchUsers()
-    fetchProducts()
-    fetchOrders()
-  }, [])
-
   const headers = { Authorization: `Bearer ${token}` }
 
-  const fetchStats = async () => {
-    try {
-      const { data } = await axios.get(`${API}/api/admin/stats`, { headers })
-      setStats(data)
-    } catch (err) { console.log(err) }
-  }
+  useEffect(() => {
+    if (!user || user.role !== 'admin') { navigate('/'); return }
+    fetchAll()
+  }, [])
 
-  const fetchUsers = async () => {
+  const fetchAll = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/admin/users`, { headers })
-      setUsers(data)
+      const [s, u, p, o, a] = await Promise.all([
+        axios.get(`${API}/api/admin/stats`, { headers }),
+        axios.get(`${API}/api/admin/users`, { headers }),
+        axios.get(`${API}/api/admin/products`, { headers }),
+        axios.get(`${API}/api/admin/orders`, { headers }),
+        axios.get(`${API}/api/admin/applications`, { headers })
+      ])
+      setStats(s.data)
+      setUsers(u.data)
+      setProducts(p.data)
+      setOrders(o.data)
+      setApplications(a.data)
     } catch (err) { console.log(err) }
-  }
-
-  const fetchProducts = async () => {
-    try {
-      const { data } = await axios.get(`${API}/api/admin/products`, { headers })
-      setProducts(data)
-    } catch (err) { console.log(err) }
-  }
-
-  const fetchOrders = async () => {
-    try {
-      const { data } = await axios.get(`${API}/api/admin/orders`, { headers })
-      setOrders(data)
-      setLoading(false)
-    } catch (err) {
-      setLoading(false)
-    }
+    finally { setLoading(false) }
   }
 
   const deleteUser = async (id) => {
@@ -64,6 +45,13 @@ function AdminDashboard() {
     try {
       await axios.delete(`${API}/api/admin/users/${id}`, { headers })
       setUsers(users.filter(u => u._id !== id))
+    } catch (err) { console.log(err) }
+  }
+
+  const suspendUser = async (id) => {
+    try {
+      const { data } = await axios.put(`${API}/api/admin/users/${id}/suspend`, {}, { headers })
+      setUsers(users.map(u => u._id === id ? data.user : u))
     } catch (err) { console.log(err) }
   }
 
@@ -82,11 +70,25 @@ function AdminDashboard() {
     } catch (err) { console.log(err) }
   }
 
+  const approveApplication = async (id) => {
+    try {
+      await axios.put(`${API}/api/admin/applications/${id}/approve`, {}, { headers })
+      setApplications(applications.map(a => a._id === id ? { ...a, status: 'approved' } : a))
+      fetchAll()
+    } catch (err) { console.log(err) }
+  }
+
+  const rejectApplication = async (id) => {
+    const reason = window.prompt('Reason for rejection:')
+    if (!reason) return
+    try {
+      await axios.put(`${API}/api/admin/applications/${id}/reject`, { reason }, { headers })
+      setApplications(applications.map(a => a._id === id ? { ...a, status: 'rejected' } : a))
+    } catch (err) { console.log(err) }
+  }
+
   const getStatusColor = (status) => {
-    const colors = {
-      pending: '#ffaa44', processing: '#44aaff',
-      shipped: '#aa44ff', delivered: '#44ff99', cancelled: '#ff4444'
-    }
+    const colors = { pending: '#ffaa44', processing: '#44aaff', shipped: '#aa44ff', delivered: '#44ff99', cancelled: '#ff4444', approved: '#44ff99', rejected: '#ff4444' }
     return colors[status] || '#ffaa44'
   }
 
@@ -97,123 +99,125 @@ function AdminDashboard() {
         .admin-wrap { min-height: 100vh; background: #0e0a1f; padding: 2rem; font-family: 'Roboto Mono', monospace; }
         .admin-title { font-family: 'Orbitron', monospace; color: #ffaa44; font-size: 1.8rem; text-align: center; margin-bottom: 2rem; text-shadow: 0 0 8px #ff44aa; }
         .admin-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center; }
-        .admin-tab {
-          padding: 0.5rem 1.5rem; border-radius: 30px; cursor: pointer;
-          font-family: 'Orbitron', monospace; font-size: 0.75rem; letter-spacing: 1px;
-          border: 1px solid #ffaa44; color: #ffaa44; background: transparent;
-        }
+        .admin-tab { padding: 0.5rem 1.5rem; border-radius: 30px; cursor: pointer; font-family: 'Orbitron', monospace; font-size: 0.75rem; letter-spacing: 1px; border: 1px solid #ffaa44; color: #ffaa44; background: transparent; }
         .admin-tab.active { background: #ffaa44; color: #0e0a1f; }
         .admin-tab:hover { background: #ffaa4433; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card {
-          background: rgba(255,170,68,0.05); border: 1px solid #ffaa44;
-          border-radius: 16px; padding: 1.5rem; text-align: center;
-        }
+        .notif { background: #ff44aa; color: #0e0a1f; font-size: 0.65rem; padding: 1px 6px; border-radius: 20px; margin-left: 4px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: rgba(255,170,68,0.05); border: 1px solid #ffaa44; border-radius: 16px; padding: 1.5rem; text-align: center; }
         .stat-value { font-size: 2rem; font-weight: bold; color: #ff44aa; font-family: 'Orbitron', monospace; }
         .stat-label { font-size: 0.75rem; color: #ffaa44; margin-top: 4px; letter-spacing: 1px; }
         .admin-table { width: 100%; border-collapse: collapse; }
         .admin-table th { color: #ffaa44; font-size: 0.75rem; letter-spacing: 1px; padding: 10px; border-bottom: 1px solid #ffaa4444; text-align: left; }
         .admin-table td { color: #ccc; font-size: 0.8rem; padding: 10px; border-bottom: 1px solid #ffaa4422; }
         .admin-table tr:hover td { background: rgba(255,170,68,0.05); }
-        .delete-btn {
-          background: transparent; border: 1px solid #ff4444; color: #ff4444;
-          padding: 3px 10px; border-radius: 20px; cursor: pointer; font-size: 0.75rem;
-        }
+        .delete-btn { background: transparent; border: 1px solid #ff4444; color: #ff4444; padding: 3px 10px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; margin-right: 4px; }
         .delete-btn:hover { background: #ff4444; color: #fff; }
-        .status-select {
-          background: #0e0a1f; border: 1px solid #ffaa44; color: #ffaa44;
-          padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; cursor: pointer;
-          font-family: 'Roboto Mono', monospace;
-        }
+        .approve-btn { background: transparent; border: 1px solid #44ff99; color: #44ff99; padding: 3px 10px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; margin-right: 4px; }
+        .approve-btn:hover { background: #44ff99; color: #000; }
+        .reject-btn { background: transparent; border: 1px solid #ff4444; color: #ff4444; padding: 3px 10px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; margin-right: 4px; }
+        .reject-btn:hover { background: #ff4444; color: #fff; }
+        .suspend-btn { background: transparent; border: 1px solid #ffaa44; color: #ffaa44; padding: 3px 10px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; margin-right: 4px; }
+        .suspend-btn:hover { background: #ffaa44; color: #000; }
+        .status-select { background: #0e0a1f; border: 1px solid #ffaa44; color: #ffaa44; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; font-family: 'Roboto Mono', monospace; }
         .product-img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; background: #1a1030; }
         .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; border: 1px solid; }
         .table-wrap { overflow-x: auto; }
         .section-title { font-family: 'Orbitron', monospace; color: #ffaa44; font-size: 1rem; margin-bottom: 1rem; }
-        .loading { text-align: center; color: #ffaa44; padding: 40px; }
+        .suspended-row td { opacity: 0.5; }
       `}</style>
 
       <div className="admin-wrap">
         <h2 className="admin-title">⟡ ADMIN DASHBOARD ⟡</h2>
 
         <div className="admin-tabs">
-          {['stats', 'orders', 'products', 'users'].map(t => (
-            <button
-              key={t}
-              className={`admin-tab ${tab === t ? 'active' : ''}`}
-              onClick={() => setTab(t)}
-            >
+          {['stats', 'applications', 'orders', 'products', 'users'].map(t => (
+            <button key={t} className={`admin-tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
               {t.toUpperCase()}
+              {t === 'applications' && applications.filter(a => a.status === 'pending').length > 0 && (
+                <span className="notif">{applications.filter(a => a.status === 'pending').length}</span>
+              )}
             </button>
           ))}
         </div>
 
-        {loading ? (
-          <p className="loading">Loading data...</p>
-        ) : (
+        {loading ? <p style={{ textAlign: 'center', color: '#ffaa44' }}>Loading...</p> : (
           <>
-            {/* STATS */}
             {tab === 'stats' && stats && (
+              <div className="stats-grid">
+                <div className="stat-card"><div className="stat-value">{stats.totalUsers}</div><div className="stat-label">BUYERS</div></div>
+                <div className="stat-card"><div className="stat-value" style={{color:'#ffaa44'}}>{stats.totalSellers}</div><div className="stat-label">SELLERS</div></div>
+                <div className="stat-card"><div className="stat-value">{stats.totalProducts}</div><div className="stat-label">PRODUCTS</div></div>
+                <div className="stat-card"><div className="stat-value">{stats.totalOrders}</div><div className="stat-label">ORDERS</div></div>
+                <div className="stat-card"><div className="stat-value">₱{stats.totalRevenue.toLocaleString()}</div><div className="stat-label">REVENUE</div></div>
+                <div className="stat-card"><div className="stat-value" style={{color:'#ffaa44'}}>{stats.pendingOrders}</div><div className="stat-label">PENDING ORDERS</div></div>
+                <div className="stat-card"><div className="stat-value" style={{color:'#ff44aa'}}>{stats.pendingApplications}</div><div className="stat-label">PENDING APPLICATIONS</div></div>
+              </div>
+            )}
+
+            {tab === 'applications' && (
               <div>
-                <div className="stats-grid">
-                  <div className="stat-card">
-                    <div className="stat-value">{stats.totalUsers}</div>
-                    <div className="stat-label">TOTAL USERS</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value">{stats.totalProducts}</div>
-                    <div className="stat-label">TOTAL PRODUCTS</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value">{stats.totalOrders}</div>
-                    <div className="stat-label">TOTAL ORDERS</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value">₱{stats.totalRevenue.toLocaleString()}</div>
-                    <div className="stat-label">TOTAL REVENUE</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value" style={{color:'#ffaa44'}}>{stats.pendingOrders}</div>
-                    <div className="stat-label">PENDING ORDERS</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value" style={{color:'#44ff99'}}>{stats.deliveredOrders}</div>
-                    <div className="stat-label">DELIVERED</div>
-                  </div>
+                <p className="section-title">SELLER APPLICATIONS ({applications.length})</p>
+                <div className="table-wrap">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>APPLICANT</th>
+                        <th>STORE NAME</th>
+                        <th>DESCRIPTION</th>
+                        <th>PHONE</th>
+                        <th>ADDRESS</th>
+                        <th>DATE</th>
+                        <th>STATUS</th>
+                        <th>ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {applications.map(app => (
+                        <tr key={app._id}>
+                          <td>{app.user?.name}<br/><span style={{color:'#888',fontSize:'11px'}}>{app.user?.email}</span></td>
+                          <td>{app.storeName}</td>
+                          <td style={{maxWidth:'150px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{app.storeDescription}</td>
+                          <td>{app.phone}</td>
+                          <td>{app.address}</td>
+                          <td>{new Date(app.createdAt).toLocaleDateString()}</td>
+                          <td>
+                            <span className="badge" style={{color: getStatusColor(app.status), borderColor: getStatusColor(app.status)}}>
+                              {app.status.toUpperCase()}
+                            </span>
+                          </td>
+                          <td>
+                            {app.status === 'pending' && (
+                              <>
+                                <button className="approve-btn" onClick={() => approveApplication(app._id)}>APPROVE</button>
+                                <button className="reject-btn" onClick={() => rejectApplication(app._id)}>REJECT</button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
 
-            {/* ORDERS */}
             {tab === 'orders' && (
               <div>
                 <p className="section-title">ALL ORDERS ({orders.length})</p>
                 <div className="table-wrap">
                   <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>ORDER ID</th>
-                        <th>BUYER</th>
-                        <th>ITEMS</th>
-                        <th>TOTAL</th>
-                        <th>DATE</th>
-                        <th>STATUS</th>
-                      </tr>
-                    </thead>
+                    <thead><tr><th>ORDER ID</th><th>BUYER</th><th>ITEMS</th><th>TOTAL</th><th>DATE</th><th>STATUS</th></tr></thead>
                     <tbody>
                       {orders.map(order => (
                         <tr key={order._id}>
                           <td>#{order._id.slice(-8).toUpperCase()}</td>
-                          <td>{order.buyer?.name || 'Unknown'}</td>
-                          <td>{order.items.length} item(s)</td>
+                          <td>{order.buyer?.name}</td>
+                          <td>{order.items.length}</td>
                           <td style={{color:'#ff44aa'}}>₱{order.totalPrice.toLocaleString()}</td>
                           <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                           <td>
-                            <select
-                              className="status-select"
-                              value={order.status}
-                              onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                              style={{color: getStatusColor(order.status)}}
-                            >
+                            <select className="status-select" value={order.status} onChange={(e) => updateOrderStatus(order._id, e.target.value)} style={{color: getStatusColor(order.status)}}>
                               {['pending','processing','shipped','delivered','cancelled'].map(s => (
                                 <option key={s} value={s}>{s.toUpperCase()}</option>
                               ))}
@@ -227,45 +231,22 @@ function AdminDashboard() {
               </div>
             )}
 
-            {/* PRODUCTS */}
             {tab === 'products' && (
               <div>
                 <p className="section-title">ALL PRODUCTS ({products.length})</p>
                 <div className="table-wrap">
                   <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>IMAGE</th>
-                        <th>NAME</th>
-                        <th>PRICE</th>
-                        <th>CATEGORY</th>
-                        <th>STOCK</th>
-                        <th>SELLER</th>
-                        <th>ACTION</th>
-                      </tr>
-                    </thead>
+                    <thead><tr><th>IMAGE</th><th>NAME</th><th>PRICE</th><th>CATEGORY</th><th>STOCK</th><th>SELLER</th><th>ACTION</th></tr></thead>
                     <tbody>
                       {products.map(product => (
                         <tr key={product._id}>
-                          <td>
-                            {product.image
-                              ? <img src={product.image} alt={product.name} className="product-img" />
-                              : <div className="product-img" />
-                            }
-                          </td>
+                          <td>{product.image ? <img src={product.image} alt={product.name} className="product-img" /> : <div className="product-img" />}</td>
                           <td>{product.name}</td>
                           <td style={{color:'#ff44aa'}}>₱{product.price.toLocaleString()}</td>
                           <td>{product.category}</td>
                           <td>{product.stock}</td>
-                          <td>{product.seller?.name || 'Unknown'}</td>
-                          <td>
-                            <button
-                              className="delete-btn"
-                              onClick={() => deleteProduct(product._id)}
-                            >
-                              DELETE
-                            </button>
-                          </td>
+                          <td>{product.seller?.storeName || product.seller?.name}</td>
+                          <td><button className="delete-btn" onClick={() => deleteProduct(product._id)}>DELETE</button></td>
                         </tr>
                       ))}
                     </tbody>
@@ -274,47 +255,23 @@ function AdminDashboard() {
               </div>
             )}
 
-            {/* USERS */}
             {tab === 'users' && (
               <div>
                 <p className="section-title">ALL USERS ({users.length})</p>
                 <div className="table-wrap">
                   <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>NAME</th>
-                        <th>EMAIL</th>
-                        <th>ROLE</th>
-                        <th>JOINED</th>
-                        <th>ACTION</th>
-                      </tr>
-                    </thead>
+                    <thead><tr><th>NAME</th><th>EMAIL</th><th>ROLE</th><th>STATUS</th><th>JOINED</th><th>ACTION</th></tr></thead>
                     <tbody>
                       {users.map(u => (
-                        <tr key={u._id}>
-                          <td>{u.name}</td>
+                        <tr key={u._id} className={u.isSuspended ? 'suspended-row' : ''}>
+                          <td>{u.name}{u.storeName && <span style={{color:'#888',fontSize:'11px',display:'block'}}>{u.storeName}</span>}</td>
                           <td>{u.email}</td>
-                          <td>
-                            <span
-                              className="badge"
-                              style={{
-                                color: u.role === 'admin' ? '#ff44aa' : '#ffaa44',
-                                borderColor: u.role === 'admin' ? '#ff44aa' : '#ffaa44'
-                              }}
-                            >
-                              {u.role.toUpperCase()}
-                            </span>
-                          </td>
+                          <td><span className="badge" style={{color: u.role === 'seller' ? '#ffaa44' : '#aaa', borderColor: u.role === 'seller' ? '#ffaa44' : '#aaa'}}>{u.role.toUpperCase()}</span></td>
+                          <td><span style={{color: u.isSuspended ? '#ff4444' : '#44ff99', fontSize:'12px'}}>{u.isSuspended ? 'SUSPENDED' : 'ACTIVE'}</span></td>
                           <td>{new Date(u.createdAt).toLocaleDateString()}</td>
                           <td>
-                            {u.role !== 'admin' && (
-                              <button
-                                className="delete-btn"
-                                onClick={() => deleteUser(u._id)}
-                              >
-                                DELETE
-                              </button>
-                            )}
+                            <button className="suspend-btn" onClick={() => suspendUser(u._id)}>{u.isSuspended ? 'UNSUSPEND' : 'SUSPEND'}</button>
+                            <button className="delete-btn" onClick={() => deleteUser(u._id)}>DELETE</button>
                           </td>
                         </tr>
                       ))}

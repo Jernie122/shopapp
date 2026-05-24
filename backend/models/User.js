@@ -22,6 +22,22 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: ''
+  },
+  isSuspended: {
+    type: Boolean,
+    default: false
+  },
+  storeName: {
+    type: String,
+    default: ''
+  },
+  storeDescription: {
+    type: String,
+    default: ''
+  },
+  phone: {
+    type: String,
+    default: ''
   }
 }, { timestamps: true });
 

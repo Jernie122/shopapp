@@ -78,6 +78,8 @@ function Navbar() {
           border-radius: 30px;
           cursor: pointer;
           font-family: monospace;
+          text-decoration: none;
+          font-size: 0.85rem;
         }
         .logout-btn:hover, .auth-link:hover {
           background: #ff44aa;
@@ -129,11 +131,25 @@ function Navbar() {
             <Link to="/cart" className="nav-link">CART <span className="cart-badge">{items.length}</span></Link>
             {user ? (
               <>
-                <Link to="/add-product" className="sell-btn">SELL</Link>
-                <Link to="/orders" className="nav-link">ORDERS</Link>
+                {/* ADMIN */}
                 {user.role === 'admin' && (
                   <Link to="/admin" className="admin-btn">⟡ ADMIN</Link>
                 )}
+
+                {/* SELLER */}
+                {user.role === 'seller' && (
+                  <>
+                    <Link to="/seller" className="sell-btn">MY STORE</Link>
+                    <Link to="/add-product" className="sell-btn">+ SELL</Link>
+                  </>
+                )}
+
+                {/* BUYER */}
+                {user.role === 'buyer' && (
+                  <Link to="/become-seller" className="sell-btn">BECOME SELLER</Link>
+                )}
+
+                <Link to="/orders" className="nav-link">ORDERS</Link>
                 <span className="nav-link user-name">👤 {user.name.toUpperCase()}</span>
                 <button onClick={logout} className="logout-btn">LOGOUT</button>
               </>
