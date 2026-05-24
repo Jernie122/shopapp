@@ -137,7 +137,7 @@ function HomePage() {
         .sort-btn { padding: 5px 14px; border-radius: 20px; border: 1px solid #ffaa4466; background: transparent; color: #aaa; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; cursor: pointer; }
         .sort-btn.active { background: #ff44aa; border-color: #ff44aa; color: #0e0a1f; }
         .sort-btn:hover { border-color: #ffaa44; color: #ffaa44; }
-        .results-count { color: #888; font-size: 0.75rem; font-family: 'Roboto Mono', monospace; margin-left: auto; }
+        .results-count { color: #ffaa44; font-size: 0.75rem; font-family: 'Roboto Mono', monospace; background: rgba(255,170,68,0.1); border: 1px solid #ffaa4466; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
 
         /* GRID */
         .loader-synth { display: flex; justify-content: center; padding: 3rem; }
@@ -226,7 +226,8 @@ function HomePage() {
 
             {/* PRODUCTS AREA */}
             <div className="products-area">
-              <div className="sort-bar">
+              <span className="results-count">{filtered.length} products</span>
+              <div className="sort-bar" style={{justifyContent:'flex-start',flexWrap:'wrap',gap:'0.5rem'}}>
                 <span className="sort-label">SORT:</span>
                 {[
                   { key: 'latest', label: 'Latest' },
@@ -243,7 +244,7 @@ function HomePage() {
                     {s.label}
                   </button>
                 ))}
-                <span className="results-count">{filtered.length} products</span>
+                
               </div>
 
               {loading ? (
