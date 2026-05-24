@@ -106,10 +106,7 @@ await Product.findByIdAndUpdate(req.params.productId, {
   }
 })
 
-    await Product.findByIdAndUpdate(req.params.productId, {
-      ratings: avgRating,
-      numReviews: reviews.length
-    });
+    ;
 
     res.status(201).json({ message: 'Review added!', review });
   } catch (error) {
@@ -135,10 +132,7 @@ router.delete('/:productId/:reviewId', protect, async (req, res) => {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : 0;
 
-    await Product.findByIdAndUpdate(req.params.productId, {
-      ratings: avgRating,
-      numReviews: reviews.length
-    });
+    ;
 
     res.json({ message: 'Review deleted' });
   } catch (error) {
