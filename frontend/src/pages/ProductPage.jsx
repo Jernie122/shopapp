@@ -74,7 +74,7 @@ function ProductPage() {
     try {
       await axios.post(
         `${API}/api/reviews/${id}`,
-        { rating, comment },
+        { rating: Number(rating), comment },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       setReviewMsg('Review submitted!')
@@ -196,7 +196,7 @@ function ProductPage() {
                 <form onSubmit={submitReview}>
                   <div style={{marginBottom:'0.5rem'}}>
                     <p style={{color:'#888',fontSize:'12px',marginBottom:'6px'}}>YOUR RATING:</p>
-                    <StarRating rating={rating} onRate={setRating} interactive={true} />
+                    <StarRating rating={rating} onRate={(val) => setRating(Number(val))} interactive={true} />
                   </div>
                   <textarea
                     className="review-textarea"
