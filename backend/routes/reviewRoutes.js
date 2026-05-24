@@ -91,13 +91,14 @@ if (!hasDelivered) {
       comment
     })
 
-    const allReviews = await Review.find({ product: req.params.productId })
-    const avgRating = allReviews.reduce((sum, r) => sum + Number(r.rating), 0) / allReviews.length
+   const allReviews = await Review.find({ product: req.params.productId })
+const total = allReviews.reduce((sum, r) => sum + Number(r.rating), 0)
+const avg = allReviews.length > 0 ? total / allReviews.length : 0
 
-    await Product.findByIdAndUpdate(req.params.productId, {
-      ratings: Number(avgRating.toFixed(1)),
-      numReviews: allReviews.length
-    })
+await Product.findByIdAndUpdate(req.params.productId, {
+  ratings: Number(avg.toFixed(1)),
+  numReviews: allReviews.length
+})
 
     res.status(201).json({ message: 'Review added!', review })
   } catch (error) {
