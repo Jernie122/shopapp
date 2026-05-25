@@ -59,174 +59,246 @@ function ChatSidebar() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
 
-        .chat-tab {
+        /* Glass Floating Button */
+        .glass-chat-tab {
           position: fixed;
           left: 0;
           top: 50%;
           transform: translateY(-50%);
           z-index: 9999;
-          background: #2c2c2c;
+          background: rgba(44, 44, 44, 0.85);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-left: none;
           color: white;
-          border: none;
-          border-radius: 0 12px 12px 0;
-          padding: 14px 8px;
+          border-radius: 0 20px 20px 0;
+          padding: 16px 8px;
           cursor: pointer;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
           font-family: 'Inter', sans-serif;
-          box-shadow: 3px 0 12px rgba(0,0,0,0.15);
-          transition: background 0.2s;
-          position: relative;
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+          transition: all 0.2s ease;
         }
-        .chat-tab:hover { background: #4f4236; }
-        .chat-tab-icon { font-size: 1.1rem; }
-        .chat-tab-label { font-size: 0.58rem; font-weight: 600; letter-spacing: 1px; writing-mode: vertical-lr; }
-        .chat-tab-badge {
+        .glass-chat-tab:hover {
+          background: rgba(44, 44, 44, 0.95);
+          transform: translateY(-50%) scale(1.02);
+          box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+        }
+        .glass-chat-tab-icon { font-size: 1.2rem; }
+        .glass-chat-tab-label { 
+          font-size: 0.6rem; 
+          font-weight: 600; 
+          letter-spacing: 1px; 
+          writing-mode: vertical-lr;
+        }
+        .glass-chat-badge {
           position: absolute;
-          top: 4px;
-          right: -4px;
+          top: -6px;
+          right: -6px;
           background: #e05c3a;
           color: white;
-          font-size: 0.58rem;
+          font-size: 0.6rem;
           font-weight: 700;
-          min-width: 16px;
-          height: 16px;
+          min-width: 18px;
+          height: 18px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 2px solid white;
+          border: 2px solid rgba(255,255,255,0.9);
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        .chat-overlay {
+        /* Glass Overlay */
+        .glass-overlay {
           position: fixed;
           top: 0; left: 0;
           width: 100vw; height: 100vh;
-          background: rgba(0,0,0,0.25);
+          background: rgba(0, 0, 0, 0.3);
+          backdrop-filter: blur(3px);
           z-index: 9997;
           animation: fadeIn 0.2s ease;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .chat-drawer {
+        /* Glass Drawer */
+        .glass-chat-drawer {
           position: fixed;
           top: 0;
           left: 0;
-          width: 280px;
+          width: 320px;
           height: 100vh;
-          background: white;
-          z-index: 9998;
+          background: rgba(255, 255, 255, 0.75);
+          backdrop-filter: blur(24px);
+          border-right: 1px solid rgba(255, 255, 255, 0.6);
           display: flex;
           flex-direction: column;
-          box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+          box-shadow: 8px 0 32px rgba(0, 0, 0, 0.08);
           font-family: 'Inter', sans-serif;
           animation: slideIn 0.25s ease;
+          z-index: 9998;
         }
         @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 
-        .cd-header {
-          padding: 1rem 1.2rem;
-          background: #2c2c2c;
+        .glass-cd-header {
+          padding: 1.2rem 1.2rem;
+          background: rgba(44, 44, 44, 0.85);
+          backdrop-filter: blur(8px);
           color: white;
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-shrink: 0;
+          border-bottom: 1px solid rgba(255,255,255,0.2);
         }
-        .cd-title { font-weight: 600; font-size: 0.88rem; }
-        .cd-close { background: transparent; border: none; color: white; cursor: pointer; font-size: 1.1rem; opacity: 0.7; padding: 0; }
-        .cd-close:hover { opacity: 1; }
+        .glass-cd-title { font-weight: 600; font-size: 0.9rem; letter-spacing: -0.2px; }
+        .glass-cd-close { 
+          background: transparent; 
+          border: none; 
+          color: white; 
+          cursor: pointer; 
+          font-size: 1.2rem; 
+          opacity: 0.7; 
+          padding: 0;
+          transition: opacity 0.2s;
+        }
+        .glass-cd-close:hover { opacity: 1; }
 
-        .cd-list { flex: 1; overflow-y: auto; }
-        .cd-conv-item {
-          padding: 0.85rem 1rem;
-          border-bottom: 1px solid #f9f7f5;
+        .glass-cd-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .glass-cd-conv-item {
+          padding: 0.9rem 1rem;
+          margin: 4px 8px;
+          background: rgba(255, 255, 255, 0.5);
+          backdrop-filter: blur(4px);
+          border-radius: 20px;
           cursor: pointer;
           display: flex;
-          gap: 10px;
+          gap: 12px;
           align-items: center;
-          transition: background 0.15s;
+          transition: all 0.2s ease;
+          border: 1px solid rgba(255, 255, 255, 0.4);
         }
-        .cd-conv-item:hover { background: #faf8f6; }
-        .cd-avatar {
-          width: 40px; height: 40px;
-          background: #f5f0ea;
-          border-radius: 50%;
+        .glass-cd-conv-item:hover {
+          background: rgba(255, 255, 255, 0.8);
+          transform: translateX(4px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .glass-cd-avatar {
+          width: 44px; height: 44px;
+          background: rgba(245, 240, 235, 0.8);
+          border-radius: 18px;
           display: flex; align-items: center; justify-content: center;
-          font-size: 1.1rem; flex-shrink: 0; overflow: hidden;
+          font-size: 1.2rem; flex-shrink: 0; overflow: hidden;
+          border: 1px solid rgba(255,255,255,0.6);
         }
-        .cd-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .cd-info { flex: 1; min-width: 0; }
-        .cd-name {
-          font-weight: 600; font-size: 0.8rem; color: #2c2c2c;
+        .glass-cd-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; }
+        .glass-cd-info { flex: 1; min-width: 0; }
+        .glass-cd-name {
+          font-weight: 600; font-size: 0.85rem; color: #2c2c2c;
           display: flex; justify-content: space-between; align-items: center;
-          margin-bottom: 2px;
+          margin-bottom: 4px;
         }
-        .cd-product { font-size: 0.68rem; color: #8f8170; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
-        .cd-last { font-size: 0.7rem; color: #bcafa0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cd-unread { background: #2c2c2c; color: white; font-size: 0.58rem; padding: 2px 6px; border-radius: 10px; flex-shrink: 0; }
-        .cd-no-conv { color: #bcafa0; font-size: 0.8rem; text-align: center; padding: 3rem 1.5rem; line-height: 1.8; }
+        .glass-cd-product { 
+          font-size: 0.7rem; 
+          color: #6b5a48; 
+          white-space: nowrap; 
+          overflow: hidden; 
+          text-overflow: ellipsis; 
+          margin-bottom: 4px;
+        }
+        .glass-cd-last { 
+          font-size: 0.7rem; 
+          color: #8f7a64; 
+          white-space: nowrap; 
+          overflow: hidden; 
+          text-overflow: ellipsis; 
+        }
+        .glass-cd-unread { 
+          background: #2c2c2c; 
+          color: white; 
+          font-size: 0.65rem; 
+          padding: 2px 8px; 
+          border-radius: 20px; 
+          flex-shrink: 0;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .glass-cd-no-conv { 
+          color: #6b5a48; 
+          font-size: 0.8rem; 
+          text-align: center; 
+          padding: 2rem 1.5rem; 
+          line-height: 1.6;
+          background: rgba(255,255,255,0.4);
+          backdrop-filter: blur(4px);
+          border-radius: 28px;
+          margin: 1rem;
+        }
 
         @media (max-width: 480px) {
-          .chat-drawer { width: 80vw; }
+          .glass-chat-drawer { width: 85vw; }
         }
       `}</style>
 
-      {/* FIXED TAB on left */}
-      <div style={{position:'fixed', left:0, top:'50%', transform:'translateY(-50%)', zIndex:9999}}>
-        <button className="chat-tab" onClick={() => setOpen(!open)}>
-          <span className="chat-tab-icon">💬</span>
-          <span className="chat-tab-label">CHAT</span>
-          {unreadTotal > 0 && (
-            <span className="chat-tab-badge">{unreadTotal}</span>
-          )}
-        </button>
-      </div>
+      {/* FLOATING BUTTON — only visible when sidebar is CLOSED */}
+      {!open && (
+        <div style={{ position: 'fixed', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 9999 }}>
+          <button className="glass-chat-tab" onClick={() => setOpen(true)}>
+            <span className="glass-chat-tab-icon">💬</span>
+            <span className="glass-chat-tab-label">CHAT</span>
+            {unreadTotal > 0 && (
+              <span className="glass-chat-badge">{unreadTotal}</span>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* OVERLAY — click outside to close */}
-      {open && <div className="chat-overlay" onClick={() => setOpen(false)} />}
+      {open && <div className="glass-overlay" onClick={() => setOpen(false)} />}
 
-      {/* DRAWER */}
+      {/* DRAWER with glass theme */}
       {open && (
-        <div className="chat-drawer">
-          <div className="cd-header">
-            <div className="cd-title">💬 Messages</div>
-            <button className="cd-close" onClick={() => setOpen(false)}>✕</button>
+        <div className="glass-chat-drawer">
+          <div className="glass-cd-header">
+            <div className="glass-cd-title">💬 Messages</div>
+            <button className="glass-cd-close" onClick={() => setOpen(false)}>✕</button>
           </div>
 
-          <div className="cd-list">
+          <div className="glass-cd-list">
             {conversations.length === 0 ? (
-              <p className="cd-no-conv">
+              <p className="glass-cd-no-conv">
                 No conversations yet.<br/>
                 Go to a product page<br/>
                 and click "chat with seller"
               </p>
-            ) : conversations.map(conv => (
-              <div
-                key={conv.conversationId}
-                className="cd-conv-item"
-                onClick={() => openChat(conv)}
-              >
-                <div className="cd-avatar">
-                  {conv.product?.image
-                    ? <img src={conv.product.image} alt="" />
-                    : '🏪'
-                  }
-                </div>
-                <div className="cd-info">
-                  <div className="cd-name">
-                    <span>{conv.otherUser?.storeName || conv.otherUser?.name}</span>
-                    {conv.unread > 0 && <span className="cd-unread">{conv.unread}</span>}
+            ) : (
+              conversations.map(conv => (
+                <div
+                  key={conv.conversationId}
+                  className="glass-cd-conv-item"
+                  onClick={() => openChat(conv)}
+                >
+                  <div className="glass-cd-avatar">
+                    {conv.product?.image
+                      ? <img src={conv.product.image} alt="" />
+                      : '🏪'
+                    }
                   </div>
-                  {conv.product && (
-                    <div className="cd-product">📦 {conv.product.name}</div>
-                  )}
-                  <div className="cd-last">{conv.lastMessage?.message}</div>
+                  <div className="glass-cd-info">
+                    <div className="glass-cd-name">
+                      <span>{conv.otherUser?.storeName || conv.otherUser?.name}</span>
+                      {conv.unread > 0 && <span className="glass-cd-unread">{conv.unread}</span>}
+                    </div>
+                    {conv.product && (
+                      <div className="glass-cd-product">📦 {conv.product.name}</div>
+                    )}
+                    <div className="glass-cd-last">{conv.lastMessage?.message}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       )}
