@@ -6,7 +6,7 @@ const API = 'https://shopapp-backend-1bio.onrender.com'
 
 function ChatSidebar() {
   const [open, setOpen] = useState(false)
-  const [view, setView] = useState('list') // 'list' or 'chat'
+  const [view, setView] = useState('list')
   const [conversations, setConversations] = useState([])
   const [messages, setMessages] = useState([])
   const [activeConv, setActiveConv] = useState(null)
@@ -22,27 +22,19 @@ function ChatSidebar() {
 
   useEffect(() => {
     if (!user) return
-
     const newSocket = io(API, { transports: ['websocket', 'polling'] })
     newSocket.emit('join', userId)
     setSocket(newSocket)
-
     newSocket.on('receiveMessage', (data) => {
       setMessages(prev => [...prev, data])
       fetchConversations()
     })
-
     fetchConversations()
-
     const interval = setInterval(() => {
       fetchConversations()
       if (activeConv) fetchMessages(activeConv.conversationId)
     }, 3000)
-
-    return () => {
-      newSocket.disconnect()
-      clearInterval(interval)
-    }
+    return () => { newSocket.disconnect(); clearInterval(interval) }
   }, [])
 
   useEffect(() => {
@@ -53,8 +45,7 @@ function ChatSidebar() {
     try {
       const { data } = await axios.get(`${API}/api/chat/conversations`, { headers })
       setConversations(data)
-      const total = data.reduce((sum, c) => sum + (c.unread || 0), 0)
-      setUnreadTotal(total)
+      setUnreadTotal(data.reduce((sum, c) => sum + (c.unread || 0), 0))
     } catch (err) { console.log(err) }
   }
 
@@ -76,17 +67,14 @@ function ChatSidebar() {
   const sendMessage = async (e) => {
     e.preventDefault()
     if (!newMessage.trim() || !activeConv) return
-
     try {
       const receiverId = activeConv.otherUser?._id || activeConv.otherUser?.id
       const productId = activeConv.conversationId.split('_')[2]
-
       const { data } = await axios.post(`${API}/api/chat/send`, {
         receiverId,
         message: newMessage,
         productId: productId !== 'undefined' ? productId : undefined
       }, { headers })
-
       setMessages(prev => [...prev, data])
       setNewMessage('')
       socket?.emit('sendMessage', { ...data, receiverId })
@@ -101,65 +89,82 @@ function ChatSidebar() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
 
-        .chat-float-btn {
+        /* TOGGLE TAB - sticks to left side */
+        .chat-tab {
           position: fixed;
-          bottom: 24px;
-          right: 24px;
-          width: 52px;
-          height: 52px;
-          background: #2c2c2c;
-          border: none;
-          border-radius: 50%;
-          color: white;
-          font-size: 1.3rem;
-          cursor: pointer;
+          left: ${open ? '300px' : '0px'};
+          top: 50%;
+          transform: translateY(-50%);
           z-index: 9999;
-          box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+          background: #2c2c2c;
+          color: white;
+          border: none;
+          border-radius: 0 12px 12px 0;
+          padding: 14px 8px;
+          cursor: pointer;
           display: flex;
+          flex-direction: column;
           align-items: center;
+          gap: 6px;
+          font-family: 'Inter', sans-serif;
+          font-size: 0.65rem;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+          box-shadow: 3px 0 12px rgba(0,0,0,0.15);
+          transition: left 0.3s ease;
+          writing-mode: vertical-lr;
+          min-height: 80px;
           justify-content: center;
-          transition: transform 0.2s, background 0.2s;
         }
-        .chat-float-btn:hover { background: #4f4236; transform: scale(1.05); }
-
-        .chat-unread-dot {
-          position: absolute;
-          top: -2px;
-          right: -2px;
+        .chat-tab:hover { background: #4f4236; }
+        .chat-tab-icon { font-size: 1rem; writing-mode: horizontal-tb; }
+        .chat-tab-unread {
           background: #e05c3a;
           color: white;
           font-size: 0.6rem;
           font-weight: 700;
-          width: 18px;
-          height: 18px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 2px solid white;
+          writing-mode: horizontal-tb;
+          position: absolute;
+          top: 6px;
+          right: -4px;
         }
 
-        .chat-panel {
+        /* OVERLAY - clicking outside collapses */
+        .chat-overlay {
           position: fixed;
-          bottom: 88px;
-          right: 24px;
-          width: 320px;
-          height: 480px;
+          top: 0; left: 0;
+          width: 100vw; height: 100vh;
+          background: rgba(0,0,0,0.3);
+          z-index: 9997;
+          animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* SIDEBAR DRAWER */
+        .chat-drawer {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 300px;
+          height: 100vh;
           background: white;
-          border-radius: 20px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+          z-index: 9998;
           display: flex;
           flex-direction: column;
-          z-index: 9998;
-          overflow: hidden;
+          box-shadow: 4px 0 24px rgba(0,0,0,0.12);
           font-family: 'Inter', sans-serif;
-          transform-origin: bottom right;
-          animation: popIn 0.2s ease;
+          animation: slideIn 0.3s ease;
         }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 
-        .cp-header {
-          padding: 0.9rem 1rem;
+        .cd-header {
+          padding: 1rem 1.2rem;
           background: #2c2c2c;
           color: white;
           display: flex;
@@ -167,119 +172,126 @@ function ChatSidebar() {
           justify-content: space-between;
           flex-shrink: 0;
         }
-        .cp-header-left { display: flex; align-items: center; gap: 8px; }
-        .cp-back-btn { background: transparent; border: none; color: white; cursor: pointer; font-size: 1rem; padding: 0; display: flex; align-items: center; }
-        .cp-title { font-weight: 600; font-size: 0.85rem; }
-        .cp-subtitle { font-size: 0.7rem; color: #bcafa0; margin-top: 1px; }
-        .cp-close { background: transparent; border: none; color: white; cursor: pointer; font-size: 1.1rem; padding: 0; opacity: 0.7; }
-        .cp-close:hover { opacity: 1; }
+        .cd-header-left { display: flex; align-items: center; gap: 8px; }
+        .cd-back { background: transparent; border: none; color: white; cursor: pointer; font-size: 1rem; padding: 0; }
+        .cd-title { font-weight: 600; font-size: 0.88rem; }
+        .cd-subtitle { font-size: 0.68rem; color: #bcafa0; margin-top: 2px; }
+        .cd-close { background: transparent; border: none; color: white; cursor: pointer; font-size: 1.1rem; opacity: 0.7; padding: 0; }
+        .cd-close:hover { opacity: 1; }
 
-        .cp-conv-list { flex: 1; overflow-y: auto; }
-        .cp-conv-item { padding: 0.8rem 1rem; border-bottom: 1px solid #f9f7f5; cursor: pointer; transition: background 0.15s; display: flex; gap: 10px; align-items: center; }
-        .cp-conv-item:hover { background: #faf8f6; }
-        .cp-avatar { width: 36px; height: 36px; background: #f5f0ea; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
-        .cp-conv-info { flex: 1; min-width: 0; }
-        .cp-conv-name { font-weight: 600; font-size: 0.78rem; color: #2c2c2c; display: flex; justify-content: space-between; }
-        .cp-conv-product { font-size: 0.68rem; color: #8f8170; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cp-conv-last { font-size: 0.7rem; color: #bcafa0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cp-unread { background: #2c2c2c; color: white; font-size: 0.6rem; padding: 1px 5px; border-radius: 10px; }
-        .cp-no-conv { color: #bcafa0; font-size: 0.8rem; text-align: center; padding: 2rem 1rem; }
+        /* CONV LIST */
+        .cd-list { flex: 1; overflow-y: auto; }
+        .cd-conv-item { padding: 0.8rem 1rem; border-bottom: 1px solid #f9f7f5; cursor: pointer; display: flex; gap: 10px; align-items: center; transition: background 0.15s; }
+        .cd-conv-item:hover { background: #faf8f6; }
+        .cd-avatar { width: 38px; height: 38px; background: #f5f0ea; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; overflow: hidden; }
+        .cd-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .cd-info { flex: 1; min-width: 0; }
+        .cd-name { font-weight: 600; font-size: 0.78rem; color: #2c2c2c; display: flex; justify-content: space-between; align-items: center; }
+        .cd-product { font-size: 0.67rem; color: #8f8170; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cd-last { font-size: 0.69rem; color: #bcafa0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cd-unread { background: #2c2c2c; color: white; font-size: 0.58rem; padding: 1px 5px; border-radius: 10px; flex-shrink: 0; }
+        .cd-no-conv { color: #bcafa0; font-size: 0.8rem; text-align: center; padding: 3rem 1.5rem; line-height: 1.6; }
 
-        .cp-messages { flex: 1; overflow-y: auto; padding: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; background: #faf8f6; }
-        .cp-msg-row { display: flex; }
-        .cp-msg-row.mine { justify-content: flex-end; }
-        .cp-msg-row.theirs { justify-content: flex-start; }
-        .cp-msg-bubble { max-width: 75%; padding: 7px 12px; border-radius: 16px; font-size: 0.78rem; line-height: 1.4; }
-        .cp-msg-row.mine .cp-msg-bubble { background: #2c2c2c; color: white; border-bottom-right-radius: 4px; }
-        .cp-msg-row.theirs .cp-msg-bubble { background: white; border: 1px solid #f0ebe5; color: #2c2c2c; border-bottom-left-radius: 4px; }
-        .cp-msg-time { font-size: 0.6rem; color: #bcafa0; margin-top: 2px; text-align: right; }
-        .cp-msg-sender { font-size: 0.62rem; color: #8f8170; margin-bottom: 2px; }
+        /* MESSAGES */
+        .cd-messages { flex: 1; overflow-y: auto; padding: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; background: #faf8f6; }
+        .cd-msg-row { display: flex; }
+        .cd-msg-row.mine { justify-content: flex-end; }
+        .cd-msg-row.theirs { justify-content: flex-start; }
+        .cd-bubble { max-width: 78%; padding: 7px 12px; border-radius: 16px; font-size: 0.78rem; line-height: 1.45; }
+        .cd-msg-row.mine .cd-bubble { background: #2c2c2c; color: white; border-bottom-right-radius: 4px; }
+        .cd-msg-row.theirs .cd-bubble { background: white; border: 1px solid #f0ebe5; color: #2c2c2c; border-bottom-left-radius: 4px; }
+        .cd-time { font-size: 0.58rem; color: #bcafa0; margin-top: 2px; text-align: right; }
+        .cd-sender { font-size: 0.6rem; color: #8f8170; margin-bottom: 2px; }
 
-        .cp-input-wrap { padding: 0.6rem 0.8rem; border-top: 1px solid #f0ebe5; display: flex; gap: 0.5rem; background: white; flex-shrink: 0; }
-        .cp-input { flex: 1; padding: 7px 12px; background: #f9f7f5; border: 1px solid #f0ebe5; border-radius: 30px; color: #2c2c2c; font-family: 'Inter', sans-serif; font-size: 0.78rem; outline: none; }
-        .cp-input:focus { border-color: #c9b69a; }
-        .cp-send { padding: 7px 14px; background: #2c2c2c; border: none; border-radius: 30px; color: white; font-size: 0.72rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
-        .cp-send:hover { background: #4f4236; }
+        /* INPUT */
+        .cd-input-wrap { padding: 0.7rem 0.9rem; border-top: 1px solid #f0ebe5; display: flex; gap: 0.5rem; background: white; flex-shrink: 0; }
+        .cd-input { flex: 1; padding: 8px 14px; background: #f9f7f5; border: 1px solid #f0ebe5; border-radius: 30px; color: #2c2c2c; font-family: 'Inter', sans-serif; font-size: 0.78rem; outline: none; }
+        .cd-input:focus { border-color: #c9b69a; }
+        .cd-send { padding: 8px 16px; background: #2c2c2c; border: none; border-radius: 30px; color: white; font-size: 0.72rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
+        .cd-send:hover { background: #4f4236; }
 
         @media (max-width: 480px) {
-          .chat-panel { width: calc(100vw - 24px); right: 12px; bottom: 80px; height: 420px; }
-          .chat-float-btn { bottom: 16px; right: 16px; }
+          .chat-drawer { width: 85vw; }
+          .chat-tab { left: ${open ? '85vw' : '0px'}; }
         }
       `}</style>
 
-      {/* FLOATING BUTTON */}
-      <button className="chat-float-btn" onClick={() => setOpen(!open)} style={{position:'relative'}}>
-        {open ? '✕' : '💬'}
+      {/* TOGGLE TAB */}
+      <button className="chat-tab" onClick={() => setOpen(!open)} style={{position:'relative'}}>
+        <span className="chat-tab-icon">{open ? '✕' : '💬'}</span>
+        {!open && <span style={{fontSize:'0.6rem',writingMode:'vertical-lr',letterSpacing:'1px'}}>CHAT</span>}
         {!open && unreadTotal > 0 && (
-          <span className="chat-unread-dot">{unreadTotal}</span>
+          <span className="chat-tab-unread">{unreadTotal}</span>
         )}
       </button>
 
-      {/* CHAT PANEL */}
+      {/* OVERLAY */}
+      {open && <div className="chat-overlay" onClick={() => setOpen(false)} />}
+
+      {/* DRAWER */}
       {open && (
-        <div className="chat-panel">
-          {/* HEADER */}
-          <div className="cp-header">
-            <div className="cp-header-left">
+        <div className="chat-drawer">
+          <div className="cd-header">
+            <div className="cd-header-left">
               {view === 'chat' && (
-                <button className="cp-back-btn" onClick={() => setView('list')}>←</button>
+                <button className="cd-back" onClick={() => setView('list')}>←</button>
               )}
               <div>
-                <div className="cp-title">
+                <div className="cd-title">
                   {view === 'list' ? '💬 Messages' : (activeConv?.otherUser?.storeName || activeConv?.otherUser?.name)}
                 </div>
                 {view === 'chat' && activeConv?.product && (
-                  <div className="cp-subtitle">📦 {activeConv.product.name}</div>
+                  <div className="cd-subtitle">📦 {activeConv.product.name}</div>
                 )}
               </div>
             </div>
-            <button className="cp-close" onClick={() => setOpen(false)}>✕</button>
+            <button className="cd-close" onClick={() => setOpen(false)}>✕</button>
           </div>
 
-          {/* CONVERSATION LIST */}
+          {/* LIST VIEW */}
           {view === 'list' && (
-            <div className="cp-conv-list">
+            <div className="cd-list">
               {conversations.length === 0 ? (
-                <p className="cp-no-conv">No conversations yet.<br/>Go to a product and click "chat with seller"</p>
+                <p className="cd-no-conv">No conversations yet.<br/>Go to a product page and click<br/>"chat with seller" to start.</p>
               ) : conversations.map(conv => (
-                <div key={conv.conversationId} className="cp-conv-item" onClick={() => openChat(conv)}>
-                  <div className="cp-avatar">
+                <div key={conv.conversationId} className="cd-conv-item" onClick={() => openChat(conv)}>
+                  <div className="cd-avatar">
                     {conv.product?.image
-                      ? <img src={conv.product.image} style={{width:'36px',height:'36px',borderRadius:'50%',objectFit:'cover'}} alt="" />
+                      ? <img src={conv.product.image} alt="" />
                       : '🏪'
                     }
                   </div>
-                  <div className="cp-conv-info">
-                    <div className="cp-conv-name">
+                  <div className="cd-info">
+                    <div className="cd-name">
                       <span>{conv.otherUser?.storeName || conv.otherUser?.name}</span>
-                      {conv.unread > 0 && <span className="cp-unread">{conv.unread}</span>}
+                      {conv.unread > 0 && <span className="cd-unread">{conv.unread}</span>}
                     </div>
-                    {conv.product && <div className="cp-conv-product">📦 {conv.product.name}</div>}
-                    <div className="cp-conv-last">{conv.lastMessage?.message}</div>
+                    {conv.product && <div className="cd-product">📦 {conv.product.name}</div>}
+                    <div className="cd-last">{conv.lastMessage?.message}</div>
                   </div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* CHAT MESSAGES */}
+          {/* CHAT VIEW */}
           {view === 'chat' && (
             <>
-              <div className="cp-messages">
+              <div className="cd-messages">
                 {loading ? (
-                  <p style={{textAlign:'center',color:'#bcafa0',fontSize:'0.78rem'}}>Loading...</p>
+                  <p style={{textAlign:'center',color:'#bcafa0',fontSize:'0.78rem',padding:'2rem'}}>Loading...</p>
                 ) : messages.map((msg, i) => {
                   const senderId = msg.sender?._id || msg.sender
                   const isMine = senderId === userId
                   return (
-                    <div key={i} className={`cp-msg-row ${isMine ? 'mine' : 'theirs'}`}>
+                    <div key={i} className={`cd-msg-row ${isMine ? 'mine' : 'theirs'}`}>
                       <div>
                         {!isMine && (
-                          <div className="cp-msg-sender">{msg.sender?.storeName || msg.sender?.name}</div>
+                          <div className="cd-sender">{msg.sender?.storeName || msg.sender?.name}</div>
                         )}
-                        <div className="cp-msg-bubble">{msg.message}</div>
-                        <div className="cp-msg-time">
-                          {new Date(msg.createdAt).toLocaleTimeString('en-PH', {hour:'2-digit',minute:'2-digit'})}
+                        <div className="cd-bubble">{msg.message}</div>
+                        <div className="cd-time">
+                          {new Date(msg.createdAt).toLocaleTimeString('en-PH', {hour:'2-digit', minute:'2-digit'})}
                         </div>
                       </div>
                     </div>
@@ -287,14 +299,14 @@ function ChatSidebar() {
                 })}
                 <div ref={messagesEndRef} />
               </div>
-              <form onSubmit={sendMessage} className="cp-input-wrap">
+              <form onSubmit={sendMessage} className="cd-input-wrap">
                 <input
-                  className="cp-input"
+                  className="cd-input"
                   placeholder="write a message..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <button type="submit" className="cp-send">send</button>
+                <button type="submit" className="cd-send">send</button>
               </form>
             </>
           )}
