@@ -11,6 +11,7 @@ import OrderHistoryPage from './pages/OrderHistoryPage'
 import AdminDashboard from './pages/AdminDashboard'
 import BecomeSellerPage from './pages/BecomeSellerPage'
 import SellerDashboard from './pages/SellerDashboard'
+import ChatPage from './pages/ChatPage'
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
         <Route path='/admin' element={<AdminDashboard />} />
         <Route path='/become-seller' element={<BecomeSellerPage />} />
         <Route path='/seller' element={<SellerDashboard />} />
+        <Route path='/chat/:conversationId' element={<ChatPage />} />
+<Route path='/chat' element={<ChatPage />} />
       </Routes>
     </>
   )
