@@ -9,13 +9,23 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Inject Font Awesome if not already loaded
+  useEffect(() => {
+    if (!document.querySelector('#font-awesome-css')) {
+      const link = document.createElement('link');
+      link.id = 'font-awesome-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css';
+      document.head.appendChild(link);
+    }
+  }, []);
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/login');
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -81,7 +91,6 @@ function Navbar() {
           border-radius: 30px;
           margin-left: 4px;
         }
-        /* Profile dropdown */
         .profile-container {
           position: relative;
         }
@@ -95,7 +104,7 @@ function Navbar() {
           cursor: pointer;
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
           transition: background 0.2s;
           border: 1px solid transparent;
         }
@@ -111,13 +120,15 @@ function Navbar() {
           border-radius: 20px;
           box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
           border: 1px solid #f0ebe5;
-          min-width: 180px;
+          min-width: 200px;
           padding: 0.5rem 0;
           z-index: 1100;
           backdrop-filter: blur(4px);
         }
         .dropdown-item {
-          display: block;
+          display: flex;
+          align-items: center;
+          gap: 10px;
           width: 100%;
           text-align: left;
           padding: 0.55rem 1.2rem;
@@ -130,6 +141,10 @@ function Navbar() {
           cursor: pointer;
           font-family: 'Inter', sans-serif;
           transition: background 0.15s;
+        }
+        .dropdown-item i {
+          width: 18px;
+          font-size: 0.85rem;
         }
         .dropdown-item:hover {
           background: #f9f5f0;
@@ -149,6 +164,9 @@ function Navbar() {
           font-weight: 500;
           text-decoration: none;
           transition: all 0.2s;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
         }
         .admin-link:hover {
           background: #4f4236;
@@ -157,7 +175,7 @@ function Navbar() {
           .aesthetic-nav { padding: 0.6rem 1rem; }
           .nav-links { gap: 1rem; }
           .profile-trigger { padding: 0.2rem 0.7rem; font-size: 0.7rem; }
-          .dropdown-menu { right: -10px; min-width: 160px; }
+          .dropdown-menu { right: -10px; min-width: 170px; }
         }
       `}</style>
 
@@ -172,51 +190,43 @@ function Navbar() {
 
             {user ? (
               <>
-                {/* Admin badge stays visible (clean, but separate) */}
                 {user.role === 'admin' && (
-                  <Link to="/admin" className="admin-link">admin</Link>
+                  <Link to="/admin" className="admin-link">
+                    <i className="fas fa-shield-alt"></i> admin
+                  </Link>
                 )}
 
-                {/* Profile dropdown */}
                 <div className="profile-container" ref={dropdownRef}>
                   <div className="profile-trigger" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                    👤 {user.name.split(' ')[0]}
-                    <span style={{ fontSize: '0.7rem' }}>{dropdownOpen ? '▲' : '▼'}</span>
+                    <i className="fas fa-user-circle"></i> {user.name.split(' ')[0]}
+                    <i className={`fas fa-chevron-${dropdownOpen ? 'up' : 'down'}`} style={{ fontSize: '0.7rem' }}></i>
                   </div>
                   {dropdownOpen && (
                     <div className="dropdown-menu">
-                      {/* Orders - everyone */}
                       <Link to="/orders" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                        📦 my orders
+                        <i className="fas fa-box"></i> my orders
                       </Link>
-
-                      {/* Chat */}
                       <Link to="/chat" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                        💬 chat
+                        <i className="fas fa-comment-dots"></i> chat
                       </Link>
-
-                      {/* Seller zone */}
                       {user.role === 'seller' && (
                         <>
                           <Link to="/seller" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                            🏪 my store
+                            <i className="fas fa-store"></i> my store
                           </Link>
                           <Link to="/add-product" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                            ➕ sell item
+                            <i className="fas fa-plus-circle"></i> sell item
                           </Link>
                         </>
                       )}
-
-                      {/* Buyer -> become seller */}
                       {user.role === 'buyer' && (
                         <Link to="/become-seller" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                          ✨ become seller
+                          <i className="fas fa-chalkboard-user"></i> become seller
                         </Link>
                       )}
-
                       <div className="dropdown-divider"></div>
                       <button className="dropdown-item" onClick={logout}>
-                        🚪 logout
+                        <i className="fas fa-sign-out-alt"></i> logout
                       </button>
                     </div>
                   )}
