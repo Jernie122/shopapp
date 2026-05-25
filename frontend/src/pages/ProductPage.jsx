@@ -37,6 +37,7 @@ function ProductPage() {
   const [comment, setComment] = useState('');
   const [reviewMsg, setReviewMsg] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [activeImage, setActiveImage] = useState(null);
   const { addItem } = useCartStore();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
@@ -51,6 +52,7 @@ function ProductPage() {
     try {
       const { data } = await axios.get(`${API}/api/products/${id}`);
       setProduct(data);
+      setActiveImage(data.image);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -109,6 +111,10 @@ function ProductPage() {
     (r) => r.user?._id === user?._id || r.user === user?._id
   );
 
+  const allImages = product.images && product.images.length > 0
+    ? product.images
+    : product.image ? [product.image] : [];
+
   return (
     <>
       <style>{`
@@ -118,9 +124,15 @@ function ProductPage() {
         .back-btn { background: transparent; border: none; color: #5a4e3e; cursor: pointer; font-family: 'Inter', monospace; font-size: 0.8rem; margin-bottom: 1.5rem; padding: 0; transition: color 0.2s; }
         .back-btn:hover { color: #2c2c2c; }
         .product-card { background: white; border-radius: 32px; border: 1px solid #f0ebe5; padding: 2rem; display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .product-image-wrapper { width: 300px; height: 300px; background: #fefcf9; border-radius: 24px; display: flex; align-items: center; justify-content: center; border: 1px solid #f0ebe5; flex-shrink: 0; overflow: hidden; }
-        .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 24px; }
+        .product-image-section { display: flex; flex-direction: column; gap: 10px; width: 300px; flex-shrink: 0; }
+        .product-image-wrapper { width: 300px; height: 300px; background: #fefcf9; border-radius: 24px; display: flex; align-items: center; justify-content: center; border: 1px solid #f0ebe5; overflow: hidden; }
+        .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 24px; transition: opacity 0.2s; }
         .no-image { color: #bcafa0; font-size: 0.8rem; }
+        .thumbnails { display: flex; gap: 6px; flex-wrap: wrap; }
+        .thumb { width: 58px; height: 58px; border-radius: 10px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; flex-shrink: 0; }
+        .thumb:hover { border-color: #c9b69a; }
+        .thumb.active { border-color: #2c2c2c; }
+        .thumb img { width: 100%; height: 100%; object-fit: cover; }
         .product-details { flex: 1; min-width: 200px; }
         .product-name { font-weight: 600; font-size: 1.6rem; letter-spacing: -0.3px; color: #2c2c2c; margin-bottom: 0.5rem; }
         .product-price { font-size: 1.8rem; font-weight: 700; color: #2c2c2c; margin-bottom: 0.75rem; }
@@ -132,8 +144,6 @@ function ProductPage() {
         .seller-info { color: #8f8170; font-size: 0.8rem; margin-bottom: 1.5rem; }
         .add-to-cart-btn { width: 100%; padding: 12px; background: #2c2c2c; border: none; border-radius: 40px; color: white; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; letter-spacing: 0.3px; }
         .add-to-cart-btn:hover { background: #4f4236; transform: scale(0.98); }
-        .chat-seller-btn { width: 100%; padding: 12px; background: transparent; border: 1.5px solid #2c2c2c; border-radius: 40px; color: #2c2c2c; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; letter-spacing: 0.3px; margin-top: 10px; }
-        .chat-seller-btn:hover { background: #f0ebe5; }
         .reviews-section { max-width: 900px; margin: 0 auto; }
         .reviews-title { font-weight: 600; font-size: 1.2rem; color: #2c2c2c; margin-bottom: 1.5rem; }
         .review-form { background: white; border: 1px solid #f0ebe5; border-radius: 28px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
@@ -159,7 +169,12 @@ function ProductPage() {
         .already-reviewed { text-align: center; padding: 0.8rem; background: #eafaf3; color: #2c6e4f; border-radius: 40px; font-size: 0.8rem; margin-bottom: 1.5rem; }
         .loader-container { min-height: 100vh; background: linear-gradient(145deg, #f9f7f5 0%, #f0eee9 100%); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; }
         .loader { color: #8f8170; font-size: 0.9rem; }
-        @media (max-width: 760px) { .product-page { padding: 1rem; } .product-card { padding: 1rem; } .product-image-wrapper { width: 100%; height: auto; max-height: 250px; } }
+        @media (max-width: 760px) {
+          .product-page { padding: 1rem; }
+          .product-card { padding: 1rem; }
+          .product-image-section { width: 100%; }
+          .product-image-wrapper { width: 100%; height: 260px; }
+        }
       `}</style>
 
       <div className="product-page">
@@ -167,9 +182,30 @@ function ProductPage() {
           <button className="back-btn" onClick={() => navigate('/')}>← back to shop</button>
 
           <div className="product-card">
-            <div className="product-image-wrapper">
-              {product.image ? <img src={product.image} alt={product.name} /> : <div className="no-image">no image</div>}
+            {/* IMAGE GALLERY */}
+            <div className="product-image-section">
+              <div className="product-image-wrapper">
+                {activeImage
+                  ? <img src={activeImage} alt={product.name} />
+                  : <div className="no-image">no image</div>
+                }
+              </div>
+              {allImages.length > 1 && (
+                <div className="thumbnails">
+                  {allImages.map((img, i) => (
+                    <div
+                      key={i}
+                      className={`thumb ${activeImage === img ? 'active' : ''}`}
+                      onClick={() => setActiveImage(img)}
+                    >
+                      <img src={img} alt={`view ${i + 1}`} />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
+
+            {/* PRODUCT DETAILS */}
             <div className="product-details">
               <h1 className="product-name">{product.name}</h1>
               <div className="product-price">₱{product.price.toLocaleString()}</div>
@@ -182,7 +218,7 @@ function ProductPage() {
               <p className="product-description">{product.description}</p>
               <div className="product-tags">
                 <span className="product-tag">📦 {product.category}</span>
-                <span className="product-tag">📦 stock: {product.stock}</span>
+                <span className="product-tag">🗃 stock: {product.stock}</span>
               </div>
               <p className="seller-info">🏪 sold by: {product.seller?.storeName || product.seller?.name || 'Unknown'}</p>
 
@@ -199,6 +235,7 @@ function ProductPage() {
             </div>
           </div>
 
+          {/* REVIEWS */}
           <div className="reviews-section">
             <div className="reviews-title">customer reviews ({reviews.length})</div>
 

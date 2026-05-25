@@ -41,14 +41,15 @@ router.post('/', protect, async (req, res) => {
     const { name, description, price, category, image, stock } = req.body;
 
     const product = await Product.create({
-      name,
-      description,
-      price,
-      category,
-      image,
-      stock,
-      seller: req.user._id
-    });
+  name,
+  description,
+  price,
+  category,
+  image,
+  images: req.body.images || [],
+  stock,
+  seller: req.user._id
+});
 
     res.status(201).json(product);
   } catch (error) {
