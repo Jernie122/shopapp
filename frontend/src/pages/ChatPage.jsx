@@ -33,7 +33,17 @@ function ChatPage() {
     })
 
     fetchConversations()
-    return () => newSocket.disconnect()
+
+// Auto refresh every 3 seconds
+const interval = setInterval(() => {
+  fetchConversations()
+  if (activeConv) fetchMessages(activeConv)
+}, 3000)
+
+return () => {
+  newSocket.disconnect()
+  clearInterval(interval)
+}
   }, [])
 
   useEffect(() => {
@@ -137,7 +147,26 @@ function ChatPage() {
         .send-btn:hover { background: #4f4236; }
         .no-chat { flex: 1; display: flex; align-items: center; justify-content: center; color: #bcafa0; font-size: 0.85rem; flex-direction: column; gap: 0.8rem; background: #faf8f6; }
         .no-chat-icon { font-size: 2.5rem; }
-        @media (max-width: 640px) { .conv-list { width: 70px; } .conv-user, .conv-product, .conv-last { font-size: 0; } .conv-user::before { content: '💬'; font-size: 1.2rem; } }
+        @media (max-width: 640px) {
+  .chat-wrap { height: calc(100vh - 56px); flex-direction: column; }
+  .conv-list { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #f0ebe5; flex-direction: row; overflow-x: auto; display: flex; flex-shrink: 0; max-height: 80px; }
+  .conv-header { display: none; }
+  .conv-item { min-width: 120px; padding: 0.6rem 0.8rem; border-bottom: none; border-right: 1px solid #f9f7f5; flex-shrink: 0; }
+  .conv-item.active { border-left: none; border-bottom: 3px solid #8a6e4b; }
+  .conv-user { font-size: 0.72rem; }
+  .conv-product { display: none; }
+  .conv-last { font-size: 0.65rem; }
+  .chat-area { flex: 1; min-height: 0; }
+  .chat-header { padding: 0.6rem 1rem; }
+  .chat-header-name { font-size: 0.8rem; }
+  .chat-header-product { font-size: 0.65rem; }
+  .messages-wrap { padding: 0.8rem; }
+  .msg-bubble { max-width: 80%; font-size: 0.8rem; padding: 8px 12px; }
+  .chat-input-wrap { padding: 0.6rem 0.8rem; gap: 0.4rem; }
+  .chat-input { font-size: 0.8rem; padding: 8px 12px; }
+  .send-btn { padding: 8px 14px; font-size: 0.7rem; }
+  .no-chat { padding: 2rem 1rem; }
+}
       `}</style>
 
       <div className="chat-wrap">
