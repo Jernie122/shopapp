@@ -13,6 +13,7 @@ import BecomeSellerPage from './pages/BecomeSellerPage'
 import SellerDashboard from './pages/SellerDashboard'
 import ChatPage from './pages/ChatPage'
 import ChatSidebar from './components/ChatSidebar'
+import SellerAnalytics from './pages/SellerAnalytics'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path='/seller' element={<SellerDashboard />} />
         <Route path='/chat/:conversationId' element={<ChatPage />} />
         <Route path='/chat' element={<ChatPage />} />
+        <Route path='/seller/analytics' element={<SellerAnalytics />} />
       </Routes>
       <ChatSidebar />
     </>
