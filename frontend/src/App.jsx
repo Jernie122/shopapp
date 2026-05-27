@@ -14,6 +14,7 @@ import SellerDashboard from './pages/SellerDashboard'
 import ChatPage from './pages/ChatPage'
 import ChatSidebar from './components/ChatSidebar'
 import SellerAnalytics from './pages/SellerAnalytics'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path='/chat/:conversationId' element={<ChatPage />} />
         <Route path='/chat' element={<ChatPage />} />
         <Route path='/seller/analytics' element={<SellerAnalytics />} />
+        <Route path='/profile' element={<ProfilePage />} />
       </Routes>
       <ChatSidebar />
     </>

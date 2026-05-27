@@ -9,7 +9,6 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Inject Font Awesome if not already loaded
   useEffect(() => {
     if (!document.querySelector('#font-awesome-css')) {
       const link = document.createElement('link');
@@ -40,143 +39,32 @@ function Navbar() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
-        .aesthetic-nav {
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-          background: rgba(255,255,255,0.94);
-          backdrop-filter: blur(16px);
-          border-bottom: 1px solid #f0ebe5;
-          padding: 0.6rem 2rem;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-        .nav-container {
-          max-width: 1400px;
-          margin: 0 auto;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .nav-logo {
-          font-size: 1.3rem;
-          font-weight: 600;
-          letter-spacing: -0.3px;
-          background: linear-gradient(135deg, #2c2c2c, #8a6e4b);
-          background-clip: text;
-          -webkit-background-clip: text;
-          color: transparent;
-          text-decoration: none;
-          transition: opacity 0.2s;
-        }
+        .aesthetic-nav { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.94); backdrop-filter: blur(16px); border-bottom: 1px solid #f0ebe5; padding: 0.6rem 2rem; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.3px; background: linear-gradient(135deg, #2c2c2c, #8a6e4b); background-clip: text; -webkit-background-clip: text; color: transparent; text-decoration: none; transition: opacity 0.2s; }
         .nav-logo:hover { opacity: 0.8; }
-        .nav-links {
-          display: flex;
-          gap: 1.5rem;
-          align-items: center;
-        }
-        .nav-link {
-          color: #5a4e3e;
-          text-decoration: none;
-          font-size: 0.85rem;
-          font-weight: 500;
-          transition: color 0.2s;
-        }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { color: #5a4e3e; text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
         .nav-link:hover { color: #2c2c2c; }
-        .cart-badge {
-          background: #2c2c2c;
-          color: white;
-          font-size: 0.7rem;
-          font-weight: 600;
-          padding: 0 6px;
-          border-radius: 30px;
-          margin-left: 4px;
-        }
-        .profile-container {
-          position: relative;
-        }
-        .profile-trigger {
-          background: #f5f0ea;
-          padding: 0.3rem 0.9rem;
-          border-radius: 40px;
-          font-size: 0.75rem;
-          font-weight: 500;
-          color: #5a4e3e;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: background 0.2s;
-          border: 1px solid transparent;
-        }
-        .profile-trigger:hover {
-          background: #ede5dc;
-          border-color: #e2d8cf;
-        }
-        .dropdown-menu {
-          position: absolute;
-          top: calc(100% + 8px);
-          right: 0;
-          background: white;
-          border-radius: 20px;
-          box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
-          border: 1px solid #f0ebe5;
-          min-width: 200px;
-          padding: 0.5rem 0;
-          z-index: 1100;
-          backdrop-filter: blur(4px);
-        }
-        .dropdown-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          width: 100%;
-          text-align: left;
-          padding: 0.55rem 1.2rem;
-          font-size: 0.8rem;
-          font-weight: 500;
-          color: #5a4e3e;
-          text-decoration: none;
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          font-family: 'Inter', sans-serif;
-          transition: background 0.15s;
-        }
-        .dropdown-item i {
-          width: 18px;
-          font-size: 0.85rem;
-        }
-        .dropdown-item:hover {
-          background: #f9f5f0;
-          color: #2c2c2c;
-        }
-        .dropdown-divider {
-          height: 1px;
-          background: #f0ebe5;
-          margin: 0.4rem 0;
-        }
-        .admin-link {
-          background: #2c2c2c;
-          color: white;
-          border-radius: 40px;
-          padding: 0.3rem 1rem;
-          font-size: 0.75rem;
-          font-weight: 500;
-          text-decoration: none;
-          transition: all 0.2s;
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .admin-link:hover {
-          background: #4f4236;
-        }
-        @media (max-width: 640px) {
-          .aesthetic-nav { padding: 0.6rem 1rem; }
-          .nav-links { gap: 1rem; }
-          .profile-trigger { padding: 0.2rem 0.7rem; font-size: 0.7rem; }
-          .dropdown-menu { right: -10px; min-width: 170px; }
-        }
+        .cart-badge { background: #2c2c2c; color: white; font-size: 0.7rem; font-weight: 600; padding: 0 6px; border-radius: 30px; margin-left: 4px; }
+        .profile-container { position: relative; }
+        .profile-trigger { background: #f5f0ea; padding: 0.3rem 0.9rem; border-radius: 40px; font-size: 0.75rem; font-weight: 500; color: #5a4e3e; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; border: 1px solid transparent; }
+        .profile-trigger:hover { background: #ede5dc; border-color: #e2d8cf; }
+        .profile-avatar { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: white; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02); border: 1px solid #f0ebe5; min-width: 200px; padding: 0.5rem 0; z-index: 1100; }
+        .dropdown-header { padding: 0.8rem 1.2rem 0.5rem; border-bottom: 1px solid #f0ebe5; margin-bottom: 0.3rem; }
+        .dropdown-user-name { font-weight: 600; font-size: 0.82rem; color: #2c2c2c; }
+        .dropdown-user-email { font-size: 0.7rem; color: #8f8170; margin-top: 1px; }
+        .dropdown-user-role { display: inline-block; background: #f5f0ea; color: #5a4e3e; font-size: 0.62rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-top: 4px; letter-spacing: 0.3px; }
+        .dropdown-item { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 0.55rem 1.2rem; font-size: 0.8rem; font-weight: 500; color: #5a4e3e; text-decoration: none; background: transparent; border: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.15s; }
+        .dropdown-item i { width: 18px; font-size: 0.85rem; }
+        .dropdown-item:hover { background: #f9f5f0; color: #2c2c2c; }
+        .dropdown-item.danger { color: #b15e4a; }
+        .dropdown-item.danger:hover { background: #fef4f1; color: #b15e4a; }
+        .dropdown-divider { height: 1px; background: #f0ebe5; margin: 0.4rem 0; }
+        .admin-link { background: #2c2c2c; color: white; border-radius: 40px; padding: 0.3rem 1rem; font-size: 0.75rem; font-weight: 500; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .admin-link:hover { background: #4f4236; }
+        @media (max-width: 640px) { .aesthetic-nav { padding: 0.6rem 1rem; } .nav-links { gap: 1rem; } .profile-trigger { padding: 0.2rem 0.7rem; font-size: 0.7rem; } .dropdown-menu { right: -10px; min-width: 170px; } }
       `}</style>
 
       <nav className="aesthetic-nav">
@@ -198,34 +86,66 @@ function Navbar() {
 
                 <div className="profile-container" ref={dropdownRef}>
                   <div className="profile-trigger" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                    <i className="fas fa-user-circle"></i> {user.name.split(' ')[0]}
-                    <i className={`fas fa-chevron-${dropdownOpen ? 'up' : 'down'}`} style={{ fontSize: '0.7rem' }}></i>
+                    {user.avatar
+                      ? <img src={user.avatar} alt="avatar" className="profile-avatar" />
+                      : <i className="fas fa-user-circle"></i>
+                    }
+                    {user.name.split(' ')[0]}
+                    <i className={`fas fa-chevron-${dropdownOpen ? 'up' : 'down'}`} style={{fontSize:'0.7rem'}}></i>
                   </div>
+
                   {dropdownOpen && (
                     <div className="dropdown-menu">
+                      {/* USER INFO HEADER */}
+                      <div className="dropdown-header">
+                        <div className="dropdown-user-name">{user.name}</div>
+                        <div className="dropdown-user-email">{user.email}</div>
+                        <span className="dropdown-user-role">{user.role}</span>
+                      </div>
+
+                      {/* PROFILE */}
+                      <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                        <i className="fas fa-user"></i> my profile
+                      </Link>
+
+                      {/* ORDERS */}
                       <Link to="/orders" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                         <i className="fas fa-box"></i> my orders
                       </Link>
+
+                      {/* CHAT */}
                       <Link to="/chat" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                        <i className="fas fa-comment-dots"></i> chat
+                        <i className="fas fa-comment-dots"></i> messages
                       </Link>
+
+                      {/* SELLER LINKS */}
                       {user.role === 'seller' && (
                         <>
+                          <div className="dropdown-divider"></div>
                           <Link to="/seller" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-store"></i> my store
                           </Link>
                           <Link to="/add-product" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                             <i className="fas fa-plus-circle"></i> sell item
                           </Link>
+                          <Link to="/seller/analytics" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                            <i className="fas fa-chart-line"></i> analytics
+                          </Link>
                         </>
                       )}
+
+                      {/* BECOME SELLER */}
                       {user.role === 'buyer' && (
-                        <Link to="/become-seller" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                          <i className="fas fa-chalkboard-user"></i> become seller
-                        </Link>
+                        <>
+                          <div className="dropdown-divider"></div>
+                          <Link to="/become-seller" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                            <i className="fas fa-chalkboard-user"></i> become seller
+                          </Link>
+                        </>
                       )}
+
                       <div className="dropdown-divider"></div>
-                      <button className="dropdown-item" onClick={logout}>
+                      <button className="dropdown-item danger" onClick={logout}>
                         <i className="fas fa-sign-out-alt"></i> logout
                       </button>
                     </div>
