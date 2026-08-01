@@ -120,7 +120,7 @@ function SellerAnalytics() {
               <div className="stats-grid">
                 <div className="stat-card">
                   <div className="stat-icon">💰</div>
-                  <div className="stat-val">${data.totalRevenue.toLocaleString()}</div>
+                  <div className="stat-val">₱{data.totalRevenue.toLocaleString()}</div>
                   <div className="stat-label">TOTAL REVENUE</div>
                 </div>
                 <div className="stat-card">
@@ -254,7 +254,7 @@ function SellerAnalytics() {
                       <div className="top-product-name">{product.name}</div>
                       <div className="top-product-sold">{product.totalSold} units sold</div>
                     </div>
-                    <div className="top-product-rev">${product.totalRevenue.toLocaleString()}</div>
+                    <div className="top-product-rev">₱{product.totalRevenue.toLocaleString()}</div>
                   </div>
                 ))}
               </div>

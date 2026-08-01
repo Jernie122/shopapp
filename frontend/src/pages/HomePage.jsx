@@ -656,7 +656,7 @@ function HomePage() {
                         </div>
                         <div className="product-info">
                           <div className="product-name">{product.name}</div>
-                          <div className="product-price">${product.price.toLocaleString()}</div>
+                          <div className="product-price">₱{product.price.toLocaleString()}</div>
                           <div className="rating-stars">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <span

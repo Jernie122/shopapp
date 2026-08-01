@@ -494,7 +494,7 @@ function AdminDashboard() {
                   <div className="stat-label">orders</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-value">${stats.totalRevenue.toLocaleString()}</div>
+                  <div className="stat-value">₱{stats.totalRevenue.toLocaleString()}</div>
                   <div className="stat-label">revenue</div>
                 </div>
                 <div className="stat-card">
@@ -733,7 +733,7 @@ function AdminDashboard() {
                             </span>
                           </td>
                           <td>{order.items.length} item(s)</td>
-                          <td style={{ fontWeight: 600 }}>${order.totalPrice.toLocaleString()}</td>
+                          <td style={{ fontWeight: 600 }}>₱{order.totalPrice.toLocaleString()}</td>
                           <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                           <td>
                             <select
@@ -795,7 +795,7 @@ function AdminDashboard() {
                             )}
                           </td>
                           <td>{product.name}</td>
-                          <td>${product.price.toLocaleString()}</td>
+                          <td>₱{product.price.toLocaleString()}</td>
                           <td>{product.category}</td>
                           <td>{product.stock}</td>
                           <td>{product.seller?.storeName || product.seller?.name}</td>

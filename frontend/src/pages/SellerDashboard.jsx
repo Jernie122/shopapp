@@ -132,7 +132,7 @@ function SellerDashboard() {
             <div className="stat-card"><div className="stat-value">{processingOrders.length}</div><div className="stat-label">processing</div></div>
             <div className="stat-card"><div className="stat-value">{deliveredOrders.length}</div><div className="stat-label">delivered</div></div>
             <div className="stat-card"><div className="stat-value">{cancelledOrders.length}</div><div className="stat-label">cancelled</div></div>
-            <div className="stat-card"><div className="stat-value">${totalRevenue.toLocaleString()}</div><div className="stat-label">revenue</div></div>
+            <div className="stat-card"><div className="stat-value">₱{totalRevenue.toLocaleString()}</div><div className="stat-label">revenue</div></div>
           </div>
 
           <div className="tabs-bar">
@@ -172,7 +172,7 @@ function SellerDashboard() {
                       <div key={order._id} className="mini-order">
                         <div className="mini-buyer">👤 {order.buyer?.name}</div>
                         <div className="buyer-info">{order.buyer?.email}</div>
-                        <div className="mini-total">${order.totalPrice.toLocaleString()}</div>
+                        <div className="mini-total">₱{order.totalPrice.toLocaleString()}</div>
                         <div className="order-items-list">
                           {order.items.map((item, i) => <div key={i}>• {item.name} × {item.quantity}</div>)}
                         </div>
@@ -191,7 +191,7 @@ function SellerDashboard() {
                     ) : processingOrders.map((order) => (
                       <div key={order._id} className="mini-order">
                         <div className="mini-buyer">👤 {order.buyer?.name}</div>
-                        <div className="mini-total">${order.totalPrice.toLocaleString()}</div>
+                        <div className="mini-total">₱{order.totalPrice.toLocaleString()}</div>
                         <div className="order-items-list">
                           {order.items.map((item, i) => <div key={i}>• {item.name} × {item.quantity}</div>)}
                         </div>
@@ -209,7 +209,7 @@ function SellerDashboard() {
                     ) : deliveredOrders.slice(0, 5).map((order) => (
                       <div key={order._id} className="mini-order">
                         <div className="mini-buyer">👤 {order.buyer?.name}</div>
-                        <div className="mini-total">${order.totalPrice.toLocaleString()}</div>
+                        <div className="mini-total">₱{order.totalPrice.toLocaleString()}</div>
                         <span className="status-badge" style={{color:'#16a34a',borderColor:'#16a34a'}}>✓ delivered</span>
                       </div>
                     ))}
@@ -222,7 +222,7 @@ function SellerDashboard() {
                     ) : cancelledOrders.slice(0, 5).map((order) => (
                       <div key={order._id} className="mini-order">
                         <div className="mini-buyer">👤 {order.buyer?.name}</div>
-                        <div className="mini-total">${order.totalPrice.toLocaleString()}</div>
+                        <div className="mini-total">₱{order.totalPrice.toLocaleString()}</div>
                         <span className="status-badge" style={{color:'#dc2626',borderColor:'#dc2626'}}>✗ cancelled</span>
                       </div>
                     ))}
@@ -264,7 +264,7 @@ function SellerDashboard() {
                                 📞 {order.shippingAddress?.phone}
                               </div>
                             </td>
-                            <td>${order.totalPrice.toLocaleString()}</td>
+                            <td>₱{order.totalPrice.toLocaleString()}</td>
                             <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                             <td>
                               <span className="status-badge" style={{color: getStatusColor(order.status), borderColor: getStatusColor(order.status)}}>
@@ -304,7 +304,7 @@ function SellerDashboard() {
                               }
                             </td>
                             <td>{product.name}</td>
-                            <td>${product.price.toLocaleString()}</td>
+                            <td>₱{product.price.toLocaleString()}</td>
                             <td>{product.category}</td>
                             <td>{product.stock}</td>
                             <td>

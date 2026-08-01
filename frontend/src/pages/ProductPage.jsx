@@ -208,7 +208,7 @@ function ProductPage() {
             {/* PRODUCT DETAILS */}
             <div className="product-details">
               <h1 className="product-name">{product.name}</h1>
-              <div className="product-price">${product.price.toLocaleString()}</div>
+              <div className="product-price">₱{product.price.toLocaleString()}</div>
               <div className="rating-display">
                 <StarRating rating={Math.round(product.ratings || 0)} interactive={false} />
                 <span className="rating-count">

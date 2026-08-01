@@ -536,7 +536,7 @@ function CheckoutPage() {
                 <hr className="summary-divider" />
                 <div className="summary-item">
                   <span>subtotal</span>
-                  <span>${total.toLocaleString()}</span>
+                  <span>₱{total.toLocaleString()}</span>
                 </div>
                 <div className="summary-item">
                   <span>shipping</span>
@@ -545,7 +545,7 @@ function CheckoutPage() {
                 <hr className="summary-divider" />
                 <div className="summary-total">
                   <span>total</span>
-                  <span>${total.toLocaleString()}</span>
+                  <span>₱{total.toLocaleString()}</span>
                 </div>
               </div>
             </div>
