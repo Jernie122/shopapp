@@ -18,7 +18,7 @@ function ChatPage() {
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
   const userId = user?._id || user?.id
-  const headers = { Authorization: `Bearer ${token}` }
+  const headers = { Authorization: `Bearer ₱{token}` }
 
   useEffect(() => {
     if (!user) { navigate('/login'); return }
@@ -58,7 +58,7 @@ function ChatPage() {
 
   const fetchConversations = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/chat/conversations`, { headers })
+      const { data } = await axios.get(`₱{API}/api/chat/conversations`, { headers })
       setConversations(data)
       setLoading(false)
     } catch (err) { setLoading(false) }
@@ -66,7 +66,7 @@ function ChatPage() {
 
   const fetchMessages = async (convId) => {
     try {
-      const { data } = await axios.get(`${API}/api/chat/${convId}`, { headers })
+      const { data } = await axios.get(`₱{API}/api/chat/₱{convId}`, { headers })
       setMessages(data)
     } catch (err) { console.log(err) }
   }
@@ -74,7 +74,7 @@ function ChatPage() {
   const openConversation = (convId) => {
     setActiveConv(convId)
     fetchMessages(convId)
-    navigate(`/chat/${convId}`)
+    navigate(`/chat/₱{convId}`)
   }
 
   const sendMessage = async (e) => {
@@ -89,7 +89,7 @@ function ChatPage() {
       const receiverId = otherUser._id || otherUser.id
       const productId = activeConv.split('_')[2]
 
-      const { data } = await axios.post(`${API}/api/chat/send`, {
+      const { data } = await axios.post(`₱{API}/api/chat/send`, {
         receiverId,
         message: newMessage,
         productId: productId !== 'undefined' ? productId : undefined
@@ -473,7 +473,7 @@ function ChatPage() {
             conversations.map(conv => (
               <div
                 key={conv.conversationId}
-                className={`conv-item ${activeConv === conv.conversationId ? 'active' : ''}`}
+                className={`conv-item ₱{activeConv === conv.conversationId ? 'active' : ''}`}
                 onClick={() => openConversation(conv.conversationId)}
               >
                 <div className="conv-user">
@@ -510,7 +510,7 @@ function ChatPage() {
                 const senderId = msg.sender?._id || msg.sender
                 const isMine = senderId === userId
                 return (
-                  <div key={i} className={`msg-row ${isMine ? 'mine' : 'theirs'}`}>
+                  <div key={i} className={`msg-row ₱{isMine ? 'mine' : 'theirs'}`}>
                     <div>
                       {!isMine && (
                         <div className="msg-sender">{msg.sender?.storeName || msg.sender?.name}</div>

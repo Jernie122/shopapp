@@ -12,7 +12,7 @@ function SellerDashboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
-  const headers = { Authorization: `Bearer ${token}` };
+  const headers = { Authorization: `Bearer ₱{token}` };
 
   useEffect(() => {
     if (!user || user.role !== 'seller') { navigate('/'); return; }
@@ -22,8 +22,8 @@ function SellerDashboard() {
   const fetchData = async () => {
     try {
       const [p, o] = await Promise.all([
-        axios.get(`${API}/api/seller/my-products`, { headers }),
-        axios.get(`${API}/api/seller/my-orders`, { headers }),
+        axios.get(`₱{API}/api/seller/my-products`, { headers }),
+        axios.get(`₱{API}/api/seller/my-orders`, { headers }),
       ]);
       setProducts(p.data);
       setOrders(o.data);
@@ -36,7 +36,7 @@ function SellerDashboard() {
 
   const updateOrderStatus = async (id, status) => {
     try {
-      await axios.put(`${API}/api/seller/orders/${id}/status`, { status }, { headers });
+      await axios.put(`₱{API}/api/seller/orders/₱{id}/status`, { status }, { headers });
       setOrders(orders.map((o) => (o._id === id ? { ...o, status } : o)));
     } catch (err) { console.log(err); }
   };
@@ -44,7 +44,7 @@ function SellerDashboard() {
   const deleteProduct = async (id) => {
     if (!window.confirm('Delete this product?')) return;
     try {
-      await axios.delete(`${API}/api/products/${id}`, { headers });
+      await axios.delete(`₱{API}/api/products/₱{id}`, { headers });
       setProducts(products.filter((p) => p._id !== id));
     } catch (err) { console.log(err); }
   };
@@ -122,7 +122,7 @@ function SellerDashboard() {
         <div className="dashboard-container">
           <div className="dashboard-header">
             <h1>seller dashboard</h1>
-            <p>{user?.storeName && `🏪 ${user.storeName}`}</p>
+            <p>{user?.storeName && `🏪 ₱{user.storeName}`}</p>
           </div>
 
           <div className="stats-grid">
@@ -138,7 +138,7 @@ function SellerDashboard() {
           <div className="tabs-bar">
             <div className="tabs">
               {['overview', 'orders', 'products'].map((t) => (
-                <button key={t} className={`tab-btn ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
+                <button key={t} className={`tab-btn ₱{tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
                   {t}
                   {t === 'orders' && pendingOrders.length > 0 && (
                     <span className="badge-count">{pendingOrders.length}</span>

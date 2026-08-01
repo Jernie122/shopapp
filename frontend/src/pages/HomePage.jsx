@@ -30,7 +30,7 @@ function HomePage() {
 
   const fetchProducts = async (keyword = '') => {
     try {
-      const { data } = await axios.get(`${API}/api/products?search=${keyword}`);
+      const { data } = await axios.get(`₱{API}/api/products?search=₱{keyword}`);
       setProducts(data);
       setLoading(false);
     } catch (error) {
@@ -580,7 +580,7 @@ function HomePage() {
               {categories.map((cat) => (
                 <div
                   key={cat}
-                  className={`category-item ${category === cat ? 'active' : ''}`}
+                  className={`category-item ₱{category === cat ? 'active' : ''}`}
                   onClick={() => setCategory(cat)}
                 >
                   <span>{cat}</span>
@@ -627,7 +627,7 @@ function HomePage() {
                 ].map((s) => (
                   <button
                     key={s.key}
-                    className={`sort-button ${sortBy === s.key ? 'active' : ''}`}
+                    className={`sort-button ₱{sortBy === s.key ? 'active' : ''}`}
                     onClick={() => setSortBy(s.key)}
                   >
                     {s.label}
@@ -646,7 +646,7 @@ function HomePage() {
                 <div className="products-grid">
                   {filtered.map((product) => (
                     <div key={product._id} className="product-card">
-                      <div onClick={() => navigate(`/product/${product._id}`)}>
+                      <div onClick={() => navigate(`/product/₱{product._id}`)}>
                         <div className="product-image-wrapper">
                           {product.image ? (
                             <img src={product.image} alt={product.name} className="product-image" />
@@ -656,7 +656,7 @@ function HomePage() {
                         </div>
                         <div className="product-info">
                           <div className="product-name">{product.name}</div>
-                          <div className="product-price">${product.price.toLocaleString()}</div>
+                          <div className="product-price">₱{product.price.toLocaleString()}</div>
                           <div className="rating-stars">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <span

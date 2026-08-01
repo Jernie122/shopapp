@@ -50,7 +50,7 @@ function ProductPage() {
 
   const fetchProduct = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/products/${id}`);
+      const { data } = await axios.get(`₱{API}/api/products/₱{id}`);
       setProduct(data);
       setActiveImage(data.image);
       setLoading(false);
@@ -61,7 +61,7 @@ function ProductPage() {
 
   const fetchReviews = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/reviews/${id}`);
+      const { data } = await axios.get(`₱{API}/api/reviews/₱{id}`);
       setReviews(data);
     } catch (error) {
       console.log(error);
@@ -75,9 +75,9 @@ function ProductPage() {
     setReviewMsg('');
     try {
       const response = await axios.post(
-        `${API}/api/reviews/${id}`,
+        `₱{API}/api/reviews/₱{id}`,
         { rating: Number(rating), comment },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ₱{token}` } }
       );
       setReviewMsg(response.data.message || 'Review submitted!');
       setRating(0);
@@ -94,8 +94,8 @@ function ProductPage() {
   const deleteReview = async (reviewId) => {
     if (!window.confirm('Delete your review?')) return;
     try {
-      await axios.delete(`${API}/api/reviews/${id}/${reviewId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      await axios.delete(`₱{API}/api/reviews/₱{id}/₱{reviewId}`, {
+        headers: { Authorization: `Bearer ₱{token}` },
       });
       fetchReviews();
       fetchProduct();
@@ -195,10 +195,10 @@ function ProductPage() {
                   {allImages.map((img, i) => (
                     <div
                       key={i}
-                      className={`thumb ${activeImage === img ? 'active' : ''}`}
+                      className={`thumb ₱{activeImage === img ? 'active' : ''}`}
                       onClick={() => setActiveImage(img)}
                     >
-                      <img src={img} alt={`view ${i + 1}`} />
+                      <img src={img} alt={`view ₱{i + 1}`} />
                     </div>
                   ))}
                 </div>
@@ -252,7 +252,7 @@ function ProductPage() {
                     </div>
                     <textarea className="review-textarea" placeholder="Share your experience with this product..." value={comment} onChange={(e) => setComment(e.target.value)} required />
                     {reviewMsg && (
-                      <div className={`review-message ${reviewMsg.includes('submitted') ? 'success' : 'error'}`}>{reviewMsg}</div>
+                      <div className={`review-message ₱{reviewMsg.includes('submitted') ? 'success' : 'error'}`}>{reviewMsg}</div>
                     )}
                     <button type="submit" className="submit-review-btn" disabled={submitting}>
                       {submitting ? 'submitting...' : 'submit review'}

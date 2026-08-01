@@ -16,7 +16,7 @@ function AdminDashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user'));
-  const headers = { Authorization: `Bearer ${token}` };
+  const headers = { Authorization: `Bearer ₱{token}` };
 
   useEffect(() => {
     if (!user || user.role !== 'admin') {
@@ -29,12 +29,12 @@ function AdminDashboard() {
   const fetchAll = async () => {
     try {
       const [s, u, p, o, a, ss] = await Promise.all([
-        axios.get(`${API}/api/admin/stats`, { headers }),
-        axios.get(`${API}/api/admin/users`, { headers }),
-        axios.get(`${API}/api/admin/products`, { headers }),
-        axios.get(`${API}/api/admin/orders`, { headers }),
-        axios.get(`${API}/api/admin/applications`, { headers }),
-        axios.get(`${API}/api/admin/sellers`, { headers }),
+        axios.get(`₱{API}/api/admin/stats`, { headers }),
+        axios.get(`₱{API}/api/admin/users`, { headers }),
+        axios.get(`₱{API}/api/admin/products`, { headers }),
+        axios.get(`₱{API}/api/admin/orders`, { headers }),
+        axios.get(`₱{API}/api/admin/applications`, { headers }),
+        axios.get(`₱{API}/api/admin/sellers`, { headers }),
       ]);
       setStats(s.data);
       setUsers(u.data);
@@ -52,7 +52,7 @@ function AdminDashboard() {
   const deleteUser = async (id) => {
     if (!window.confirm('Delete this user?')) return;
     try {
-      await axios.delete(`${API}/api/admin/users/${id}`, { headers });
+      await axios.delete(`₱{API}/api/admin/users/₱{id}`, { headers });
       setUsers(users.filter((u) => u._id !== id));
     } catch (err) {
       console.log(err);
@@ -62,7 +62,7 @@ function AdminDashboard() {
   const suspendUser = async (id) => {
     try {
       const { data } = await axios.put(
-        `${API}/api/admin/users/${id}/suspend`,
+        `₱{API}/api/admin/users/₱{id}/suspend`,
         {},
         { headers }
       );
@@ -75,7 +75,7 @@ function AdminDashboard() {
   const deleteProduct = async (id) => {
     if (!window.confirm('Delete this product?')) return;
     try {
-      await axios.delete(`${API}/api/admin/products/${id}`, { headers });
+      await axios.delete(`₱{API}/api/admin/products/₱{id}`, { headers });
       setProducts(products.filter((p) => p._id !== id));
     } catch (err) {
       console.log(err);
@@ -85,7 +85,7 @@ function AdminDashboard() {
   const updateOrderStatus = async (id, status) => {
     try {
       await axios.put(
-        `${API}/api/admin/orders/${id}/status`,
+        `₱{API}/api/admin/orders/₱{id}/status`,
         { status },
         { headers }
       );
@@ -98,7 +98,7 @@ function AdminDashboard() {
   const approveApplication = async (id) => {
     try {
       await axios.put(
-        `${API}/api/admin/applications/${id}/approve`,
+        `₱{API}/api/admin/applications/₱{id}/approve`,
         {},
         { headers }
       );
@@ -116,7 +116,7 @@ function AdminDashboard() {
     if (!reason) return;
     try {
       await axios.put(
-        `${API}/api/admin/applications/${id}/reject`,
+        `₱{API}/api/admin/applications/₱{id}/reject`,
         { reason },
         { headers }
       );
@@ -455,7 +455,7 @@ function AdminDashboard() {
             (t) => (
               <button
                 key={t}
-                className={`tab-btn ${tab === t ? 'active' : ''}`}
+                className={`tab-btn ₱{tab === t ? 'active' : ''}`}
                 onClick={() => setTab(t)}
               >
                 {t}
@@ -494,7 +494,7 @@ function AdminDashboard() {
                   <div className="stat-label">orders</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-value">${stats.totalRevenue.toLocaleString()}</div>
+                  <div className="stat-value">₱{stats.totalRevenue.toLocaleString()}</div>
                   <div className="stat-label">revenue</div>
                 </div>
                 <div className="stat-card">
@@ -575,7 +575,7 @@ function AdminDashboard() {
                             </div>
                             <div className="seller-stat-item">
                               <div className="seller-stat-value">
-                                ${totalRevenue.toLocaleString()}
+                                ₱{totalRevenue.toLocaleString()}
                               </div>
                               <div className="seller-stat-label">revenue</div>
                             </div>
@@ -608,7 +608,7 @@ function AdminDashboard() {
                                   }}
                                 >
                                   <span style={{ fontWeight: 600 }}>
-                                    ${order.totalPrice.toLocaleString()}
+                                    ₱{order.totalPrice.toLocaleString()}
                                   </span>
                                   <span
                                     className="status-badge"
@@ -733,7 +733,7 @@ function AdminDashboard() {
                             </span>
                           </td>
                           <td>{order.items.length} item(s)</td>
-                          <td style={{ fontWeight: 600 }}>${order.totalPrice.toLocaleString()}</td>
+                          <td style={{ fontWeight: 600 }}>₱{order.totalPrice.toLocaleString()}</td>
                           <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                           <td>
                             <select
@@ -795,7 +795,7 @@ function AdminDashboard() {
                             )}
                           </td>
                           <td>{product.name}</td>
-                          <td>${product.price.toLocaleString()}</td>
+                          <td>₱{product.price.toLocaleString()}</td>
                           <td>{product.category}</td>
                           <td>{product.stock}</td>
                           <td>{product.seller?.storeName || product.seller?.name}</td>

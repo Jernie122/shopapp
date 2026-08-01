@@ -51,20 +51,20 @@ function AddProductPage() {
       if (images.length === 1) {
         const formData = new FormData()
         formData.append('image', images[0])
-        const uploadRes = await axios.post(`${API}/api/upload`, formData, {
-          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+        const uploadRes = await axios.post(`₱{API}/api/upload`, formData, {
+          headers: { Authorization: `Bearer ₱{token}`, 'Content-Type': 'multipart/form-data' }
         })
         imageUrls = [uploadRes.data.imageUrl]
       } else {
         const formData = new FormData()
         images.forEach(img => formData.append('images', img))
-        const uploadRes = await axios.post(`${API}/api/upload/multiple`, formData, {
-          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+        const uploadRes = await axios.post(`₱{API}/api/upload/multiple`, formData, {
+          headers: { Authorization: `Bearer ₱{token}`, 'Content-Type': 'multipart/form-data' }
         })
         imageUrls = uploadRes.data.imageUrls
       }
 
-      await axios.post(`${API}/api/products`,
+      await axios.post(`₱{API}/api/products`,
         {
           name,
           description,
@@ -74,7 +74,7 @@ function AddProductPage() {
           image: imageUrls[0],
           images: imageUrls
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ₱{token}` } }
       )
 
       setMessage('Product added successfully!')
@@ -161,7 +161,7 @@ function AddProductPage() {
                 <div className="images-grid">
                   {previews.map((src, i) => (
                     <div key={i} className="img-thumb">
-                      <img src={src} alt={`preview ${i}`} />
+                      <img src={src} alt={`preview ₱{i}`} />
                       {i === 0 && <span className="img-thumb-main">MAIN</span>}
                       <button type="button" className="img-remove" onClick={() => removeImage(i)}>✕</button>
                     </div>
