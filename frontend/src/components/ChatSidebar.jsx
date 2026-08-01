@@ -14,7 +14,7 @@ function ChatSidebar() {
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
   const userId = user?._id || user?.id
-  const headers = { Authorization: `Bearer ₱{token}` }
+  const headers = { Authorization: `Bearer ${token}` }
 
   useEffect(() => {
     if (!user) return
@@ -41,7 +41,7 @@ function ChatSidebar() {
 
   const fetchConversations = async () => {
     try {
-      const { data } = await axios.get(`₱{API}/api/chat/conversations`, { headers })
+      const { data } = await axios.get(`${API}/api/chat/conversations`, { headers })
       setConversations(data)
       setUnreadTotal(data.reduce((sum, c) => sum + (c.unread || 0), 0))
     } catch (err) { console.log(err) }
@@ -49,7 +49,7 @@ function ChatSidebar() {
 
   const openChat = (conv) => {
     setOpen(false)
-    navigate(`/chat/₱{conv.conversationId}`)
+    navigate(`/chat/${conv.conversationId}`)
   }
 
   if (!user) return null

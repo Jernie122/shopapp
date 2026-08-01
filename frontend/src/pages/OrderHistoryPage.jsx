@@ -9,7 +9,7 @@ function OrderHistoryPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const headers = { Authorization: `Bearer ₱{token}` };
+  const headers = { Authorization: `Bearer ${token}` };
 
   // Inject Font Awesome if not already present
   useEffect(() => {
@@ -28,7 +28,7 @@ function OrderHistoryPage() {
 
   const fetchOrders = async () => {
     try {
-      const { data } = await axios.get(`₱{API}/api/orders/myorders`, { headers });
+      const { data } = await axios.get(`${API}/api/orders/myorders`, { headers });
       setOrders(data);
       setLoading(false);
     } catch (error) {
@@ -39,7 +39,7 @@ function OrderHistoryPage() {
   const confirmDelivery = async (orderId) => {
     if (!window.confirm('Confirm that you received this order?')) return;
     try {
-      await axios.put(`₱{API}/api/orders/₱{orderId}/confirm`, {}, { headers });
+      await axios.put(`${API}/api/orders/${orderId}/confirm`, {}, { headers });
       setOrders(orders.map(o => o._id === orderId ? { ...o, status: 'delivered' } : o));
     } catch (err) {
       alert(err.response?.data?.message || 'Error confirming order');
@@ -452,14 +452,14 @@ function OrderHistoryPage() {
                         </div>
                         <div className="order-item-actions">
                           <div className="order-item-price">
-                            ₱{(item.price * item.quantity).toLocaleString()}
+                            ${(item.price * item.quantity).toLocaleString()}
                           </div>
                           {order.status === 'delivered' && (
                             <button
                               className="review-btn"
                               onClick={() =>
                                 navigate(
-                                  `/product/₱{item.product?._id || item.product}?review=true`
+                                  `/product/${item.product?._id || item.product}?review=true`
                                 )
                               }
                             >
@@ -482,7 +482,7 @@ function OrderHistoryPage() {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div className="order-total">
-                        <i className="fas fa-tag"></i> total: ₱{order.totalPrice.toLocaleString()}
+                        <i className="fas fa-tag"></i> total: ${order.totalPrice.toLocaleString()}
                       </div>
                       {order.status === 'shipped' && (
                         <button

@@ -59,7 +59,7 @@ function CheckoutPage() {
           shippingAddress: form,
           totalPrice: total,
         },
-        { headers: { Authorization: `Bearer ₱{token}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       clearCart();
@@ -528,7 +528,7 @@ function CheckoutPage() {
                         {item.name} × {item.quantity}
                       </span>
                       <span className="cart-mini-price">
-                        ₱{(item.price * item.quantity).toLocaleString()}
+                        ${(item.price * item.quantity).toLocaleString()}
                       </span>
                     </div>
                   ))}
@@ -536,7 +536,7 @@ function CheckoutPage() {
                 <hr className="summary-divider" />
                 <div className="summary-item">
                   <span>subtotal</span>
-                  <span>₱{total.toLocaleString()}</span>
+                  <span>${total.toLocaleString()}</span>
                 </div>
                 <div className="summary-item">
                   <span>shipping</span>
@@ -545,7 +545,7 @@ function CheckoutPage() {
                 <hr className="summary-divider" />
                 <div className="summary-total">
                   <span>total</span>
-                  <span>₱{total.toLocaleString()}</span>
+                  <span>${total.toLocaleString()}</span>
                 </div>
               </div>
             </div>

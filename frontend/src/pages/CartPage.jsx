@@ -379,12 +379,12 @@ function CartPage() {
                   </div>
                   <div className="item-details">
                     <div className="item-name">{item.name}</div>
-                    <div className="item-price">₱{item.price.toLocaleString()}</div>
+                    <div className="item-price">${item.price.toLocaleString()}</div>
                     <div className="item-quantity">
                       <i className="fas fa-cubes"></i> quantity: {item.quantity}
                     </div>
                     <div className="item-subtotal">
-                      subtotal: ₱{(item.price * item.quantity).toLocaleString()}
+                      subtotal: ${(item.price * item.quantity).toLocaleString()}
                     </div>
                   </div>
                   <button
@@ -403,7 +403,7 @@ function CartPage() {
               </div>
               <div className="summary-row">
                 <span>subtotal</span>
-                <span>₱{total.toLocaleString()}</span>
+                <span>${total.toLocaleString()}</span>
               </div>
               <div className="summary-row">
                 <span>shipping</span>
@@ -412,7 +412,7 @@ function CartPage() {
               <div className="divider"></div>
               <div className="total-row">
                 <span>total</span>
-                <span>₱{total.toLocaleString()}</span>
+                <span>${total.toLocaleString()}</span>
               </div>
               <button
                 className="checkout-btn"

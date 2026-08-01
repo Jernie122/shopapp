@@ -37,8 +37,8 @@ function BecomeSellerPage() {
 
   const checkApplication = async () => {
     try {
-      const { data } = await axios.get(`₱{API}/api/seller/my-application`, {
-        headers: { Authorization: `Bearer ₱{token}` },
+      const { data } = await axios.get(`${API}/api/seller/my-application`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setApplication(data);
     } catch (err) {
@@ -57,8 +57,8 @@ function BecomeSellerPage() {
     setSubmitting(true);
     setMessage('');
     try {
-      await axios.post(`₱{API}/api/seller/apply`, form, {
-        headers: { Authorization: `Bearer ₱{token}` },
+      await axios.post(`${API}/api/seller/apply`, form, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setMessage('Application submitted successfully! Please wait for admin approval.');
       checkApplication();
@@ -382,7 +382,7 @@ function BecomeSellerPage() {
               />
 
               {message && (
-                <div className={`message ₱{message.includes('successfully') ? 'success' : 'error'}`}>
+                <div className={`message ${message.includes('successfully') ? 'success' : 'error'}`}>
                   {message}
                 </div>
               )}

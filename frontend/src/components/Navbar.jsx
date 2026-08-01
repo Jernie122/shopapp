@@ -91,7 +91,7 @@ function Navbar() {
                       : <i className="fas fa-user-circle"></i>
                     }
                     {user.name.split(' ')[0]}
-                    <i className={`fas fa-chevron-₱{dropdownOpen ? 'up' : 'down'}`} style={{fontSize:'0.7rem'}}></i>
+                    <i className={`fas fa-chevron-${dropdownOpen ? 'up' : 'down'}`} style={{fontSize:'0.7rem'}}></i>
                   </div>
 
                   {dropdownOpen && (

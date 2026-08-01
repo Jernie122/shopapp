@@ -23,8 +23,8 @@ function SellerAnalytics() {
 
   const fetchAnalytics = async () => {
     try {
-      const { data } = await axios.get(`₱{API}/api/seller/analytics`, {
-        headers: { Authorization: `Bearer ₱{token}` }
+      const { data } = await axios.get(`${API}/api/seller/analytics`, {
+        headers: { Authorization: `Bearer ${token}` }
       })
       setData(data)
       setLoading(false)
@@ -34,7 +34,7 @@ function SellerAnalytics() {
     }
   }
 
-  const formatCurrency = (val) => `₱₱{Number(val).toLocaleString()}`
+  const formatCurrency = (val) => `$${Number(val).toLocaleString()}`
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -120,7 +120,7 @@ function SellerAnalytics() {
               <div className="stats-grid">
                 <div className="stat-card">
                   <div className="stat-icon">💰</div>
-                  <div className="stat-val">₱{data.totalRevenue.toLocaleString()}</div>
+                  <div className="stat-val">${data.totalRevenue.toLocaleString()}</div>
                   <div className="stat-label">TOTAL REVENUE</div>
                 </div>
                 <div className="stat-card">
@@ -142,8 +142,8 @@ function SellerAnalytics() {
                   <div className="stat-icon">📈</div>
                   <div className="stat-val">
                     {data.totalOrders > 0
-                      ? `₱₱{Math.round(data.totalRevenue / data.totalOrders).toLocaleString()}`
-                      : '₱0'}
+                      ? `$${Math.round(data.totalRevenue / data.totalOrders).toLocaleString()}`
+                      : '$0'}
                   </div>
                   <div className="stat-label">AVG ORDER VALUE</div>
                 </div>
@@ -155,11 +155,11 @@ function SellerAnalytics() {
                   <div className="chart-title">Last 7 Days Performance</div>
                   <div className="chart-tabs">
                     <button
-                      className={`chart-tab ₱{activeChart === 'revenue' ? 'active' : ''}`}
+                      className={`chart-tab ${activeChart === 'revenue' ? 'active' : ''}`}
                       onClick={() => setActiveChart('revenue')}
                     >Revenue</button>
                     <button
-                      className={`chart-tab ₱{activeChart === 'orders' ? 'active' : ''}`}
+                      className={`chart-tab ${activeChart === 'orders' ? 'active' : ''}`}
                       onClick={() => setActiveChart('orders')}
                     >Orders</button>
                   </div>
@@ -172,7 +172,7 @@ function SellerAnalytics() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0ebe5" />
                       <XAxis dataKey="date" tick={{fontSize:11,fill:'#8f8170'}} axisLine={false} tickLine={false} />
                       <YAxis tick={{fontSize:11,fill:'#8f8170'}} axisLine={false} tickLine={false}
-                        tickFormatter={activeChart === 'revenue' ? (v) => `₱₱{v.toLocaleString()}` : undefined} />
+                        tickFormatter={activeChart === 'revenue' ? (v) => `$${v.toLocaleString()}` : undefined} />
                       <Tooltip content={<CustomTooltip />} />
                       {activeChart === 'revenue' ? (
                         <Line type="monotone" dataKey="revenue" name="Revenue" stroke="#2c2c2c" strokeWidth={2.5} dot={{fill:'#2c2c2c',r:4}} activeDot={{r:6}} />
@@ -206,7 +206,7 @@ function SellerAnalytics() {
                             <Cell key={index} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(val) => [`₱{val} orders`]} />
+                        <Tooltip formatter={(val) => [`${val} orders`]} />
                         <Legend iconType="circle" iconSize={8} wrapperStyle={{fontSize:'0.72rem'}} />
                       </PieChart>
                     </ResponsiveContainer>
@@ -243,7 +243,7 @@ function SellerAnalytics() {
                   <p className="no-data">No sales yet</p>
                 ) : data.topProducts.map((product, i) => (
                   <div key={i} className="top-product-item">
-                    <div className={`top-product-rank ₱{i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''}`}>
+                    <div className={`top-product-rank ${i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''}`}>
                       {i + 1}
                     </div>
                     {product.image
@@ -254,7 +254,7 @@ function SellerAnalytics() {
                       <div className="top-product-name">{product.name}</div>
                       <div className="top-product-sold">{product.totalSold} units sold</div>
                     </div>
-                    <div className="top-product-rev">₱{product.totalRevenue.toLocaleString()}</div>
+                    <div className="top-product-rev">${product.totalRevenue.toLocaleString()}</div>
                   </div>
                 ))}
               </div>

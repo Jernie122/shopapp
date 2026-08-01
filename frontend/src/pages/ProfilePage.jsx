@@ -25,7 +25,7 @@ function ProfilePage() {
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
-  const headers = { Authorization: `Bearer ₱{token}` }
+  const headers = { Authorization: `Bearer ${token}` }
 
   useEffect(() => {
     if (!user) { navigate('/login'); return }
@@ -34,7 +34,7 @@ function ProfilePage() {
 
   const fetchProfile = async () => {
     try {
-      const { data } = await axios.get(`₱{API}/api/auth/profile`, { headers })
+      const { data } = await axios.get(`${API}/api/auth/profile`, { headers })
       setProfile(data)
       setName(data.name || '')
       setStoreName(data.storeName || '')
@@ -58,7 +58,7 @@ function ProfilePage() {
     if (!avatarFile) return null
     const formData = new FormData()
     formData.append('image', avatarFile)
-    const { data } = await axios.post(`₱{API}/api/upload`, formData, {
+    const { data } = await axios.post(`${API}/api/upload`, formData, {
       headers: { ...headers, 'Content-Type': 'multipart/form-data' }
     })
     return data.imageUrl
@@ -72,7 +72,7 @@ function ProfilePage() {
       let avatarUrl = profile.avatar
       if (avatarFile) avatarUrl = await uploadAvatar()
 
-      const { data } = await axios.put(`₱{API}/api/auth/profile`, {
+      const { data } = await axios.put(`${API}/api/auth/profile`, {
         name, storeName, storeDescription, phone, avatar: avatarUrl
       }, { headers })
 
@@ -103,7 +103,7 @@ function ProfilePage() {
     setSaving(true)
     setMessage({ text: '', type: '' })
     try {
-      const { data } = await axios.put(`₱{API}/api/auth/change-password`, {
+      const { data } = await axios.put(`${API}/api/auth/change-password`, {
         currentPassword, newPassword
       }, { headers })
       setMessage({ text: data.message, type: 'success' })
@@ -195,15 +195,15 @@ function ProfilePage() {
 
           {/* TABS */}
           <div className="profile-tabs">
-            <button className={`profile-tab ₱{tab === 'profile' ? 'active' : ''}`} onClick={() => { setTab('profile'); setMessage({text:'',type:''}) }}>
+            <button className={`profile-tab ${tab === 'profile' ? 'active' : ''}`} onClick={() => { setTab('profile'); setMessage({text:'',type:''}) }}>
               👤 Profile
             </button>
             {profile?.role === 'seller' && (
-              <button className={`profile-tab ₱{tab === 'store' ? 'active' : ''}`} onClick={() => { setTab('store'); setMessage({text:'',type:''}) }}>
+              <button className={`profile-tab ${tab === 'store' ? 'active' : ''}`} onClick={() => { setTab('store'); setMessage({text:'',type:''}) }}>
                 🏪 Store
               </button>
             )}
-            <button className={`profile-tab ₱{tab === 'password' ? 'active' : ''}`} onClick={() => { setTab('password'); setMessage({text:'',type:''}) }}>
+            <button className={`profile-tab ${tab === 'password' ? 'active' : ''}`} onClick={() => { setTab('password'); setMessage({text:'',type:''}) }}>
               🔐 Password
             </button>
           </div>
@@ -229,7 +229,7 @@ function ProfilePage() {
                 <input className="form-input" value={profile?.role?.toUpperCase()} disabled />
 
                 {message.text && tab === 'profile' && (
-                  <div className={`msg-box ₱{message.type}`}>{message.text}</div>
+                  <div className={`msg-box ${message.type}`}>{message.text}</div>
                 )}
 
                 <button type="submit" className="save-btn" disabled={saving}>
@@ -259,7 +259,7 @@ function ProfilePage() {
                   onChange={(e) => setPhone(e.target.value)} placeholder="09XX XXX XXXX" />
 
                 {message.text && tab === 'store' && (
-                  <div className={`msg-box ₱{message.type}`}>{message.text}</div>
+                  <div className={`msg-box ${message.type}`}>{message.text}</div>
                 )}
 
                 <button type="submit" className="save-btn" disabled={saving}>
@@ -288,7 +288,7 @@ function ProfilePage() {
                   placeholder="Enter new password" required />
                 {newPassword && (
                   <div className="password-strength" style={{
-                    width: `₱{Math.min(newPassword.length * 10, 100)}%`,
+                    width: `${Math.min(newPassword.length * 10, 100)}%`,
                     background: newPassword.length < 6 ? '#f87171' : newPassword.length < 10 ? '#f5b042' : '#34d399'
                   }} />
                 )}
@@ -305,7 +305,7 @@ function ProfilePage() {
                 )}
 
                 {message.text && tab === 'password' && (
-                  <div className={`msg-box ₱{message.type}`}>{message.text}</div>
+                  <div className={`msg-box ${message.type}`}>{message.text}</div>
                 )}
 
                 <button type="submit" className="save-btn" disabled={saving}>

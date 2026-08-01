@@ -13,15 +13,15 @@ function ChatButton({ sellerId, sellerName, productId, productName }) {
     if (user._id === sellerId) return
 
     try {
-      await axios.post(`₱{API}/api/chat/send`, {
+      await axios.post(`${API}/api/chat/send`, {
         receiverId: sellerId,
-        message: `Hi! I'm interested in your product: ₱{productName}`,
+        message: `Hi! I'm interested in your product: ${productName}`,
         productId
-      }, { headers: { Authorization: `Bearer ₱{token}` } })
+      }, { headers: { Authorization: `Bearer ${token}` } })
 
       const ids = [user._id, sellerId].sort()
-      const conversationId = `₱{ids[0]}_₱{ids[1]}_₱{productId}`
-      navigate(`/chat/₱{conversationId}`)
+      const conversationId = `${ids[0]}_${ids[1]}_${productId}`
+      navigate(`/chat/${conversationId}`)
     } catch (err) {
       console.log(err)
     }

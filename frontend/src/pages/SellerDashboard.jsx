@@ -12,7 +12,7 @@ function SellerDashboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
-  const headers = { Authorization: `Bearer ₱{token}` };
+  const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
     if (!user || user.role !== 'seller') { navigate('/'); return; }
@@ -22,8 +22,8 @@ function SellerDashboard() {
   const fetchData = async () => {
     try {
       const [p, o] = await Promise.all([
-        axios.get(`₱{API}/api/seller/my-products`, { headers }),
-        axios.get(`₱{API}/api/seller/my-orders`, { headers }),
+        axios.get(`${API}/api/seller/my-products`, { headers }),
+        axios.get(`${API}/api/seller/my-orders`, { headers }),
       ]);
       setProducts(p.data);
       setOrders(o.data);
@@ -36,7 +36,7 @@ function SellerDashboard() {
 
   const updateOrderStatus = async (id, status) => {
     try {
-      await axios.put(`₱{API}/api/seller/orders/₱{id}/status`, { status }, { headers });
+      await axios.put(`${API}/api/seller/orders/${id}/status`, { status }, { headers });
       setOrders(orders.map((o) => (o._id === id ? { ...o, status } : o)));
     } catch (err) { console.log(err); }
   };
@@ -44,7 +44,7 @@ function SellerDashboard() {
   const deleteProduct = async (id) => {
     if (!window.confirm('Delete this product?')) return;
     try {
-      await axios.delete(`₱{API}/api/products/₱{id}`, { headers });
+      await axios.delete(`${API}/api/products/${id}`, { headers });
       setProducts(products.filter((p) => p._id !== id));
     } catch (err) { console.log(err); }
   };
@@ -122,7 +122,7 @@ function SellerDashboard() {
         <div className="dashboard-container">
           <div className="dashboard-header">
             <h1>seller dashboard</h1>
-            <p>{user?.storeName && `🏪 ₱{user.storeName}`}</p>
+            <p>{user?.storeName && `🏪 ${user.storeName}`}</p>
           </div>
 
           <div className="stats-grid">
@@ -132,13 +132,13 @@ function SellerDashboard() {
             <div className="stat-card"><div className="stat-value">{processingOrders.length}</div><div className="stat-label">processing</div></div>
             <div className="stat-card"><div className="stat-value">{deliveredOrders.length}</div><div className="stat-label">delivered</div></div>
             <div className="stat-card"><div className="stat-value">{cancelledOrders.length}</div><div className="stat-label">cancelled</div></div>
-            <div className="stat-card"><div className="stat-value">₱{totalRevenue.toLocaleString()}</div><div className="stat-label">revenue</div></div>
+            <div className="stat-card"><div className="stat-value">${totalRevenue.toLocaleString()}</div><div className="stat-label">revenue</div></div>
           </div>
 
           <div className="tabs-bar">
             <div className="tabs">
               {['overview', 'orders', 'products'].map((t) => (
-                <button key={t} className={`tab-btn ₱{tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
+                <button key={t} className={`tab-btn ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
                   {t}
                   {t === 'orders' && pendingOrders.length > 0 && (
                     <span className="badge-count">{pendingOrders.length}</span>
@@ -172,7 +172,7 @@ function SellerDashboard() {
                       <div key={order._id} className="mini-order">
                         <div className="mini-buyer">👤 {order.buyer?.name}</div>
                         <div className="buyer-info">{order.buyer?.email}</div>
-                        <div className="mini-total">₱{order.totalPrice.toLocaleString()}</div>
+                        <div className="mini-total">${order.totalPrice.toLocaleString()}</div>
                         <div className="order-items-list">
                           {order.items.map((item, i) => <div key={i}>• {item.name} × {item.quantity}</div>)}
                         </div>
@@ -191,7 +191,7 @@ function SellerDashboard() {
                     ) : processingOrders.map((order) => (
                       <div key={order._id} className="mini-order">
                         <div className="mini-buyer">👤 {order.buyer?.name}</div>
-                        <div className="mini-total">₱{order.totalPrice.toLocaleString()}</div>
+                        <div className="mini-total">${order.totalPrice.toLocaleString()}</div>
                         <div className="order-items-list">
                           {order.items.map((item, i) => <div key={i}>• {item.name} × {item.quantity}</div>)}
                         </div>
@@ -209,7 +209,7 @@ function SellerDashboard() {
                     ) : deliveredOrders.slice(0, 5).map((order) => (
                       <div key={order._id} className="mini-order">
                         <div className="mini-buyer">👤 {order.buyer?.name}</div>
-                        <div className="mini-total">₱{order.totalPrice.toLocaleString()}</div>
+                        <div className="mini-total">${order.totalPrice.toLocaleString()}</div>
                         <span className="status-badge" style={{color:'#16a34a',borderColor:'#16a34a'}}>✓ delivered</span>
                       </div>
                     ))}
@@ -222,7 +222,7 @@ function SellerDashboard() {
                     ) : cancelledOrders.slice(0, 5).map((order) => (
                       <div key={order._id} className="mini-order">
                         <div className="mini-buyer">👤 {order.buyer?.name}</div>
-                        <div className="mini-total">₱{order.totalPrice.toLocaleString()}</div>
+                        <div className="mini-total">${order.totalPrice.toLocaleString()}</div>
                         <span className="status-badge" style={{color:'#dc2626',borderColor:'#dc2626'}}>✗ cancelled</span>
                       </div>
                     ))}
@@ -253,7 +253,7 @@ function SellerDashboard() {
                             </td>
                             <td>
                               {order.items.map((item, i) => (
-                                <div key={i} className="order-items-list">• {item.name} × {item.quantity} — ₱{(item.price * item.quantity).toLocaleString()}</div>
+                                <div key={i} className="order-items-list">• {item.name} × {item.quantity} — ${(item.price * item.quantity).toLocaleString()}</div>
                               ))}
                             </td>
                             <td>
@@ -264,7 +264,7 @@ function SellerDashboard() {
                                 📞 {order.shippingAddress?.phone}
                               </div>
                             </td>
-                            <td>₱{order.totalPrice.toLocaleString()}</td>
+                            <td>${order.totalPrice.toLocaleString()}</td>
                             <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                             <td>
                               <span className="status-badge" style={{color: getStatusColor(order.status), borderColor: getStatusColor(order.status)}}>
@@ -304,7 +304,7 @@ function SellerDashboard() {
                               }
                             </td>
                             <td>{product.name}</td>
-                            <td>₱{product.price.toLocaleString()}</td>
+                            <td>${product.price.toLocaleString()}</td>
                             <td>{product.category}</td>
                             <td>{product.stock}</td>
                             <td>
